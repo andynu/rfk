@@ -9,7 +9,7 @@ import (
 	"github.com/dhowden/tag"
 )
 
-const concurrency = 100
+const concurrency = 10
 
 var sem = make(chan bool, concurrency)
 var out = make(chan string)
@@ -51,9 +51,15 @@ func audioFileChecksum(path string) {
 	defer func() { <-sem }()
 	f, err := os.Open(path)
 	defer f.Close()
-	check(err)
+	if err != nil {
+		out <- fmt.Sprintf("%q\t%q", err, path)
+		return
+	}
 	checksum, err := tag.Sum(f)
-	check(err)
+	if err != nil {
+		out <- fmt.Sprintf("%q\t%q", err, path)
+		return
+	}
 	out <- fmt.Sprintf("%s\t%q", checksum, path)
 }
 
