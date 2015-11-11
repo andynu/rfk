@@ -19,8 +19,8 @@ func LoadSongs(songsTxt string) *[]string {
 	return &songsList
 }
 
-func Songs() []string {
-	return songsList
+func Songs() *[]string {
+	return &songsList
 }
 
 func check(e error) {
