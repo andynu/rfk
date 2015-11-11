@@ -2,19 +2,21 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"rfk/dj"
+	"rfk/library"
 	"rfk/player"
-	"flag"
 )
 
 var songsTxt = flag.String("c", "/home/andy/songs.txt", "Songs txt file, one path per line")
 
 func main() {
-  flag.Parse()
+	flag.Parse()
+	library.LoadSongs(*songsTxt)
 	log.Println("RFK v3 startup")
 	for {
-		song := dj.NextSong(*songsTxt)
+		song := dj.NextSong()
 		player.Play(song)
 	}
 }

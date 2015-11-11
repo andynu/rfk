@@ -6,8 +6,6 @@ import (
 	"os/exec"
 )
 
-type songPath string
-
 const playerBin string = "mpg123"
 
 func Play(path string) {
