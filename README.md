@@ -14,7 +14,6 @@ A few assumptions:
 
 ### Install go
 You'll need go. See https://golang.org/dl/
-https://golang.org/doc/install?download=go1.5.1.linux-amd64.tar.gz
 
     cd
     wget https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz    
