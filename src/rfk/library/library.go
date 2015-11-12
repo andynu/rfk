@@ -3,18 +3,29 @@ package library
 
 import (
 	"bufio"
+	"fmt"
+	"log"
 	"os"
 )
 
 var songsList []string
 
 func init() {
-	LoadSongs("./data/mongongo/songs.txt")
+	host, err := os.Hostname()
+	check(err)
+	songsPath := fmt.Sprintf("./data/%s/songs.txt", host)
+	log.Printf("Loading songs from %q", songsPath)
+	LoadSongs(songsPath)
 }
 
 func LoadSongs(songsTxt string) *[]string {
 	f, err := os.Open(songsTxt)
-	check(err)
+	if err != nil {
+		log.Print("Could not load songs. Please add a list of mp3 paths to the file listed below")
+		log.Print(err)
+		os.Exit(1)
+	}
+
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
