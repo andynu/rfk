@@ -58,4 +58,4 @@ You should now be listening to random music.
 
 ## Attributions
 
-* dhowden/tag is used for audio only checksums, and mp3 metadata extraction. See src/github.com/dhowden/tag/LICENSE
+* dhowden/tag is used for audio only checksums, and mp3 metadata extraction. See [LICENSE](src/github.com/dhowden/tag/LICENSE)
