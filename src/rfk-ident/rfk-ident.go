@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"os"
 
@@ -15,13 +14,9 @@ var sem = make(chan bool, concurrency)
 var out = make(chan string)
 
 func main() {
-	//var checksum = flag.Bool("m", false, "machine readable (audio only) checksums")
-	flag.Parse()
-
-	//runtime.GOMAXPROCS(2)
 
 	// generate audio only checksums from file params or stdin
-	files := flag.Args()
+	files := os.Args[1:]
 
 	count := 0
 	if len(files) != 0 {
@@ -62,14 +57,6 @@ func audioFileChecksum(path string) {
 	}
 	out <- fmt.Sprintf("%s\t%q", checksum, path)
 }
-
-//m, err := tag.ReadFrom(f)
-//log.Print(m.Format())
-//log.Print(m.Title())
-//log.Print(m.Album())
-//log.Print(m.Artist())
-//log.Print(m.Genre())
-//log.Print(m.Year())
 
 func check(err error) {
 	if err != nil {
