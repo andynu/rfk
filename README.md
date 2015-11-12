@@ -4,7 +4,7 @@ A jukebox that plays random songs. (for now)
 
 **This is a toy project as I learn go.**
 
-## Building
+## Prereqs
 
 A few assumptions:
 
@@ -34,12 +34,12 @@ or download it from http://www.mpg123.de/
 
 ### Configure your music library
 
-RFK knows about your music from a songs.txt file that contains absolute paths paths to your song files (one per line).
+RFK knows about your music from a songs.txt file that contains absolute paths to your song files (one per line).
 
     mkdir -p ~/rfk/data/$(hostname)/
     find / -name '*.mp3' > ~/rfk/data/$(hostname)/songs.txt
 
-### Building & Running
+## Building & Running
 
     cd ~/rfk
     go build rfk
