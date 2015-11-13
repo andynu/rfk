@@ -14,32 +14,32 @@ type Song struct {
 	Path string
 }
 
-var songs []Song
-var songPathMap map[string]Song
-var songHashMap map[string][]Song
+var songs []*Song
+var songPathMap map[string]*Song
+var songHashMap map[string][]*Song
 
 func init() {
 	host, err := os.Hostname()
 	check(err)
 	songsPath := fmt.Sprintf("./data/%s/songs.txt", host)
 	songHashesPath := fmt.Sprintf("./data/%s/song_hashes.txt", host)
-	log.Printf("Loading songs from %q", songsPath)
 
-	songs = make([]Song, 1000)
-	songHashMap = make(map[string][]Song, 1000)
-	songPathMap = make(map[string]Song, 1000)
+	songs = make([]*Song, 1000)
+	songHashMap = make(map[string][]*Song, 1000)
+	songPathMap = make(map[string]*Song, 1000)
 
-	if ok, _ := pathExists(songHashesPath); ok {
-		LoadSongHashesMap(songHashesPath)
-	} else if ok, _ := pathExists(songsPath); ok {
-		LoadSongs(songsPath)
+	if a, _ := pathExists(songHashesPath); a {
+		loadSongHashesMap(songHashesPath)
+	} else if b, _ := pathExists(songsPath); b {
+		loadSongs(songsPath)
 	} else {
 		log.Printf("Could not load %q - %q", songHashesPath, err)
 	}
 }
 
 // consumes a text file of the form "hash\tfilepath\n"
-func LoadSongHashesMap(songHashesTxt string) {
+func loadSongHashesMap(songHashesTxt string) {
+	log.Printf("Loading songs from %q", songHashesTxt)
 	hashIdx := 0
 	pathIdx := 1
 
@@ -63,16 +63,17 @@ func LoadSongHashesMap(songHashesTxt string) {
 
 	for _, record := range records {
 		song := Song{Path: record[pathIdx], Hash: record[hashIdx]}
-		songs = append(songs, song)
-		songPathMap[song.Path] = song
+		songs = append(songs, &song)
+		songPathMap[song.Path] = &song
 		if songHashMap[song.Hash] == nil {
-			songHashMap[song.Hash] = make([]Song, 1)
-			songHashMap[song.Hash] = append(songHashMap[song.Hash], song)
+			songHashMap[song.Hash] = make([]*Song, 1)
+			songHashMap[song.Hash] = append(songHashMap[song.Hash], &song)
 		}
 	}
 }
 
-func LoadSongs(songsTxt string) {
+func loadSongs(songsTxt string) {
+	log.Printf("Loading songs from %q", songsTxt)
 	f, err := os.Open(songsTxt)
 	if err != nil {
 		log.Print("Could not load songs. Please add a list of mp3 paths to the file listed below")
@@ -85,13 +86,13 @@ func LoadSongs(songsTxt string) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		song := Song{Path: scanner.Text()}
-		songPathMap[song.Path] = song
-		songs = append(songs, song)
+		songPathMap[song.Path] = &song
+		songs = append(songs, &song)
 	}
 
 }
 
-func Songs() *[]Song {
+func Songs() *[]*Song {
 	return &songs
 }
 

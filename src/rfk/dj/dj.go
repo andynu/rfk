@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var songs []library.Song
+var songs []*library.Song
 var requests = list.New()
 
 func NextSong() string {
