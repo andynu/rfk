@@ -62,9 +62,7 @@ func LoadSongHashesMap(songHashesTxt string) {
 	}
 
 	for _, record := range records {
-		var song Song
-		song.Path = record[pathIdx]
-		song.Hash = record[hashIdx]
+		song := Song{Path: record[pathIdx], Hash: record[hashIdx]}
 		songs = append(songs, song)
 		songPathMap[song.Path] = song
 		if songHashMap[song.Hash] == nil {
@@ -86,8 +84,7 @@ func LoadSongs(songsTxt string) {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		var song Song
-		song.Path = scanner.Text()
+		song := Song{Path: scanner.Text()}
 		songPathMap[song.Path] = song
 		songs = append(songs, song)
 	}
