@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var songs []string
+var songs []library.Song
 var requests = list.New()
 
 func NextSong() string {
@@ -28,7 +28,7 @@ func NextSong() string {
 func randomSong() (string, error) {
 	rand.Seed(time.Now().UnixNano())
 	idx := rand.Intn(len(songs))
-	return songs[idx], nil
+	return songs[idx].Path, nil
 }
 
 func requestedSong() (string, error) {
