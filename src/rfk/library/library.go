@@ -2,11 +2,11 @@
 package library
 
 import (
-	"bufio"
-	"encoding/csv"
 	"fmt"
 	"log"
-	"os"
+	"path"
+	"rfk/config"
+	"rfk/observer"
 )
 
 type Song struct {
@@ -14,101 +14,44 @@ type Song struct {
 	Path string
 }
 
-var songs []*Song
+var songsPath, songHashesPath string
+
+var Songs []*Song
 var songPathMap map[string]*Song
 var songHashMap map[string][]*Song
 
-func init() {
-	host, err := os.Hostname()
-	check(err)
-	songsPath := fmt.Sprintf("./data/%s/songs.txt", host)
-	songHashesPath := fmt.Sprintf("./data/%s/song_hashes.txt", host)
+func Load() {
 
-	songs = make([]*Song, 1000)
 	songHashMap = make(map[string][]*Song, 1000)
 	songPathMap = make(map[string]*Song, 1000)
 
-	if a, _ := pathExists(songHashesPath); a {
-		loadSongHashesMap(songHashesPath)
-	} else if b, _ := pathExists(songsPath); b {
-		loadSongs(songsPath)
-	} else {
-		log.Printf("Could not load %q - %q", songHashesPath, err)
+	if Songs == nil {
+		songHashesPath = path.Join(config.Config.DataPath, "song_hashes.txt")
+		err := loadSongHashesMap(songHashesPath)
+		panicOnErr(err)
 	}
+
+	//if Songs == nil {
+	//	songsPath = path.Join(config.Config.DataPath, "songs.txt")
+	//	err := loadSongs(songsPath)
+	//	panicOnErr(err)
+	//}
+
+	observer.Notify("library.loaded", Song{})
+	log.Printf("Loaded %d songs", len(Songs))
 }
 
-// consumes a text file of the form "hash\tfilepath\n"
-func loadSongHashesMap(songHashesTxt string) {
-	log.Printf("Loading songs from %q", songHashesTxt)
-	hashIdx := 0
-	pathIdx := 1
+func ByHash(hash string) (*Song, error) {
+	songs := songHashMap[hash]
+	log.Printf("DEBUG: songs:%v", songs)
+	if songs != nil {
+		return songs[0], nil
+	}
+	return &Song{}, fmt.Errorf("UnknownHash")
+}
 
-	f, err := os.Open(songHashesTxt)
+func panicOnErr(err error) {
 	if err != nil {
-		log.Print("Could not load song hashes.")
-		log.Print(err)
-		return
+		panic(fmt.Errorf("library: %v", err))
 	}
-	defer f.Close()
-	r := csv.NewReader(f)
-	r.Comma = '\t'
-	r.Comment = '#'
-
-	records, err := r.ReadAll()
-	if err != nil {
-		log.Print("Could not load song hashes.")
-		log.Print(err)
-		return
-	}
-
-	for _, record := range records {
-		song := Song{Path: record[pathIdx], Hash: record[hashIdx]}
-		songs = append(songs, &song)
-		songPathMap[song.Path] = &song
-		if songHashMap[song.Hash] == nil {
-			songHashMap[song.Hash] = make([]*Song, 1)
-			songHashMap[song.Hash] = append(songHashMap[song.Hash], &song)
-		}
-	}
-}
-
-func loadSongs(songsTxt string) {
-	log.Printf("Loading songs from %q", songsTxt)
-	f, err := os.Open(songsTxt)
-	if err != nil {
-		log.Print("Could not load songs. Please add a list of mp3 paths to the file listed below")
-		log.Print(err)
-		os.Exit(1)
-	}
-
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		song := Song{Path: scanner.Text()}
-		songPathMap[song.Path] = &song
-		songs = append(songs, &song)
-	}
-
-}
-
-func Songs() *[]*Song {
-	return &songs
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func pathExists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return true, err
 }

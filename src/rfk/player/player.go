@@ -2,24 +2,46 @@
 package player
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"rfk/library"
+	"rfk/observer"
 
 	"github.com/dhowden/tag"
 )
 
 const playerBin string = "mpg123"
 
-func Play(path string) {
-	log.Printf("player: playing %q", path)
-	logMetadata(path)
+var CurrentSong library.Song
+var playerCmd *exec.Cmd
 
-	out, err := exec.Command(playerBin, path).Output()
+func Play(song library.Song) error {
+	CurrentSong = song
+	log.Printf("player: playing %q", song.Path)
+	logMetadata(song.Path)
+
+	playerCmd = exec.Command(playerBin, song.Path)
+	//playerCmd = exec.Command("sleep", "5")
+	err := playerCmd.Run()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("player: %v", err)
 	}
-	log.Printf(string(out))
+	observer.Notify("player.played", song)
+	return nil
+}
+
+func Stop() error {
+	if playerCmd != nil {
+		return playerCmd.Process.Kill()
+	}
+	return nil
+}
+
+func Skip() error {
+	observer.Notify("player.skip", CurrentSong)
+	return Stop()
 }
 
 func logMetadata(path string) {
