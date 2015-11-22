@@ -10,8 +10,19 @@ import (
 )
 
 type Song struct {
-	Hash string
-	Path string
+	Hash  string
+	Path  string
+	Rank  int64
+	links []*Node
+}
+
+func (n Song) Links() []*Node {
+	return n.links
+}
+
+func (n Song) Link(o Node) error {
+	n.links = append(n.links, &o)
+	return nil
 }
 
 var songsPath, songHashesPath string
@@ -39,6 +50,7 @@ func Load() {
 
 	observer.Notify("library.loaded", Song{})
 	log.Printf("Loaded %d songs", len(Songs))
+	//LoadGraph(Songs)
 }
 
 func ByHash(hash string) (*Song, error) {

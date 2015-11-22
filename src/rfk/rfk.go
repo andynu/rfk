@@ -3,6 +3,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"rfk/dj"
 	"rfk/karma"
@@ -18,6 +19,12 @@ func main() {
 	flag.Parse()
 
 	switch *command {
+	case "graph":
+		library.Load()
+		roots := library.LoadGraph(library.Songs)
+		for root := range roots {
+			fmt.Printf("root : %v\n", root)
+		}
 	case "karma":
 		karma.LoadImpressions()
 	case "add":

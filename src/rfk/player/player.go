@@ -22,8 +22,8 @@ func Play(song library.Song) error {
 	log.Printf("player: playing %q", song.Path)
 	logMetadata(song.Path)
 
-	playerCmd = exec.Command(playerBin, song.Path)
-	//playerCmd = exec.Command("sleep", "5")
+	//playerCmd = exec.Command(playerBin, song.Path)
+	playerCmd = exec.Command("sleep", "5")
 	err := playerCmd.Run()
 	if err != nil {
 		return fmt.Errorf("player: %v", err)

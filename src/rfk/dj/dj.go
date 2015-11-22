@@ -9,8 +9,8 @@ import (
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	karmaSong(),
-	randomSong,
+	//karmaSong(),
+	randomNonNegativeSong,
 }
 
 func NextSong() (library.Song, error) {
