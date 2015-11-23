@@ -10,23 +10,19 @@ import (
 )
 
 type Song struct {
-	Hash  string
-	Path  string
-	Rank  int64
-	links []*Node
+	Hash string
+	Path string
+	Rank float64
+	pathNode
 }
 
-func (n Song) Links() []*Node {
-	return n.links
-}
-
-func (n Song) Link(o Node) error {
-	n.links = append(n.links, &o)
-	return nil
+func (s *Song) String() string {
+	return fmt.Sprintf("[Song %s %s]", s.Hash, s.Path)
 }
 
 var songsPath, songHashesPath string
 
+var PathRoots []Node
 var Songs []*Song
 var songPathMap map[string]*Song
 var songHashMap map[string][]*Song
@@ -42,15 +38,15 @@ func Load() {
 		panicOnErr(err)
 	}
 
-	//if Songs == nil {
-	//	songsPath = path.Join(config.Config.DataPath, "songs.txt")
-	//	err := loadSongs(songsPath)
-	//	panicOnErr(err)
-	//}
+	if Songs == nil {
+		songsPath = path.Join(config.Config.DataPath, "songs.txt")
+		err := loadSongs(songsPath)
+		panicOnErr(err)
+	}
 
 	observer.Notify("library.loaded", Song{})
 	log.Printf("Loaded %d songs", len(Songs))
-	//LoadGraph(Songs)
+	PathRoots = LoadGraph(Songs)
 }
 
 func ByHash(hash string) (*Song, error) {

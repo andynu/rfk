@@ -11,11 +11,6 @@ import (
 
 func karmaSong() func() (library.Song, error) {
 	log.Println("karmaSong")
-	err := karma.LoadImpressions()
-	if err != nil {
-		panic(err)
-	}
-	log.Println("LoadImpressions complete")
 
 	var impressionsByKey map[int][]string = invertMap(karma.SongKarma)
 	impressionKeys := keys(impressionsByKey)

@@ -6,12 +6,13 @@ import (
 	"os"
 	"path"
 	"rfk/config"
+	"rfk/library"
 	"strconv"
 )
 
 var SongKarma map[string]int
 
-func LoadImpressions() error {
+func Load() error {
 	SongKarma = make(map[string]int)
 
 	hashIdx := 0
@@ -36,6 +37,12 @@ func LoadImpressions() error {
 		hash := record[hashIdx]
 		impression, _ := strconv.Atoi(record[impressionIdx])
 		SongKarma[hash] += impression
+
+		song, err := library.ByHash(hash)
+		if err == nil {
+			//log.Printf("spread it %v %v", hash, impression)
+			library.SpreadImpressionByPath(song, impression)
+		}
 	}
 	//log.Printf("%v", SongKarma)
 	log.Printf("karma: impressions loaded")

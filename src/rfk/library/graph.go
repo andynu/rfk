@@ -1,79 +1,109 @@
 package library
 
 import (
+	"fmt"
 	"log"
+	"math"
+	"sort"
 	"strings"
 )
 
+const debug = false
+
 type Node interface {
 	Links() []*Node
-	Link(Node) error
+	Link(*Node) error
 }
 
-type NodeSet map[*Node]bool
+type pathNode struct {
+	Path  string
+	links map[*Node]bool
+}
 
-func (ns NodeSet) Nodes() []Node {
-	var nodes []Node
-	for node, _ := range ns {
-		nodes = append(nodes, *node)
+func (n *pathNode) Links() []*Node {
+	var nodes []*Node
+	for node, _ := range n.links {
+		nodes = append(nodes, node)
 	}
 	return nodes
 }
 
-func (ns NodeSet) Add(node *Node) {
-	ns[node] = true
-}
+func (n *pathNode) Link(o *Node) error {
+	if n.links == nil {
+		n.links = make(map[*Node]bool)
+	}
+	if debug {
+		log.Printf("Link: %v, %v", &n, o)
+		if n.links[o] {
+			log.Printf("skip link: %v, %v", n, *o)
+		} else {
+			log.Printf("link nodes: %v, %v", n, *o)
+		}
+	}
 
-type PathNode struct {
-	Path  string
-	links []*Node
-}
-
-func (n PathNode) Links() []*Node {
-	return n.links
-}
-
-func (n PathNode) Link(o Node) error {
-	n.links = append(n.links, &o)
+	n.links[o] = true
 	return nil
+}
+
+func (n pathNode) String() string {
+	return fmt.Sprintf("[pathNode %s]", n.Path)
 }
 
 func LoadGraph(songs []*Song) (roots []Node) {
 	log.Println("Loading graph")
-	var lastNode Node
+	var lastDepth int
+	var lastNode *Node
 	byPath := make(map[string]*Node)
 	rootPaths := make(map[string]bool)
 
 	traverseSongPaths(songs, func(partialPath string, pathDepth int, song *Song) {
-		// Lookup || Create PathNode
-		var node Node
-		var nodePtr *Node = byPath[partialPath]
-
-		if nodePtr != nil {
-			node = *nodePtr
-		} else {
-			node = PathNode{Path: partialPath}
-			byPath[partialPath] = &node
+		depthDiff := math.Abs(float64(lastDepth - pathDepth))
+		if debug {
+			log.Printf("Depthdiff %d - %d, %d", int(depthDiff), lastDepth, pathDepth)
 		}
-
-		if pathDepth == 0 {
-			rootPaths[partialPath] = true
-		}
-
-		// Link paths
-		if lastNode != nil {
-			node.Link(lastNode)
-			lastNode.Link(node)
+		if depthDiff > 2 {
+			lastNode = nil
 		}
 
 		// Link song
-		if song != nil {
-			var songNode Node = song
-			node.Link(songNode)
-			songNode.Link(node)
+		if lastNode != nil && song != nil {
+
+			song.Link(lastNode)
+			songNode := Node(song)
+			(*lastNode).Link(&songNode)
+			if debug {
+				log.Printf("add song: %v, %v => %v", &lastNode, &song, song)
+			}
+
+		} else {
+
+			// Lookup || Create PathNode
+			var node Node
+			var nodePtr *Node = byPath[partialPath]
+			if nodePtr != nil {
+				node = *nodePtr
+			} else {
+				node = &pathNode{Path: partialPath}
+				if debug {
+					log.Printf("add node: %v => %v", &node, node)
+				}
+				byPath[partialPath] = &node
+			}
+
+			if pathDepth == 0 {
+				rootPaths[partialPath] = true
+			}
+
+			// Link paths
+			if lastNode != nil {
+				node.Link(lastNode)
+
+				(*lastNode).Link(&node)
+			}
+			lastDepth = pathDepth
+			lastNode = &node
 		}
 
-		lastNode = node
 	})
 	log.Println("Loading graph complete")
 
@@ -93,7 +123,7 @@ func traverseSongPaths(
 	songs []*Song,
 	visitor func(partialPath string, pathDepth int, song *Song)) {
 
-	limited := false
+	limited := debug
 	i := 0
 	for _, song := range songs {
 		partialPath := ""
@@ -111,8 +141,59 @@ func traverseSongPaths(
 			visitor(partialPath, pathDepth, leafSong)
 		}
 		i++
-		if limited && i > 10 {
+		if limited && i > 20 {
 			break
 		}
+	}
+}
+
+func traverseGraph(root Node, visit func(node Node, depth int)) {
+	visited := make(map[Node]bool)
+	depth := 0
+	_traverseGraph(root, depth, visited, visit)
+}
+
+func _traverseGraph(node Node, depth int, visited map[Node]bool, visit func(node Node, depth int)) {
+	if node == nil || visited[node] {
+		return
+	}
+	visit(node, depth)
+	visited[node] = true
+	for _, link := range node.Links() {
+		_traverseGraph(*link, depth+1, visited, visit)
+	}
+}
+func SpreadImpressionByPath(song *Song, impression int) {
+	fimp := float64(impression)
+	traverseGraph(song, func(node Node, depth int) {
+		if depth > 3 {
+			return
+		}
+		s, ok := node.(*Song)
+		if ok {
+			//log.Printf("simp: %s -> (%d) %s", song.Hash, depth, s)
+			s.Rank += fimp / math.Pow(2.0, float64(depth))
+		}
+	})
+}
+
+func CountImpressionsByDepth(song *Song) {
+	depthCounts := make(map[int]int)
+	traverseGraph(song, func(node Node, depth int) {
+		if depth > 5 {
+			return
+		}
+		//fmt.Printf("%d\t%s\n", depth, node)
+		depthCounts[depth]++
+	})
+
+	var sortedKeys []int
+	for depth, _ := range depthCounts {
+		sortedKeys = append(sortedKeys, depth)
+	}
+	sort.Ints(sortedKeys)
+
+	for _, depth := range sortedKeys {
+		fmt.Printf("%d\t%d\n", depth, depthCounts[depth])
 	}
 }

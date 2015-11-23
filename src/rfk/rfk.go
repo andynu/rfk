@@ -21,12 +21,22 @@ func main() {
 	switch *command {
 	case "graph":
 		library.Load()
-		roots := library.LoadGraph(library.Songs)
-		for root := range roots {
+		karma.Load()
+		for root := range library.PathRoots {
 			fmt.Printf("root : %v\n", root)
+			fmt.Printf("song: %v\n", library.Songs[0])
+			fmt.Printf("song: %v\n", &library.Songs[0])
+			//library.CountImpressionsByDepth(library.Songs[0])
+			//library.SpreadImpressionByPath(library.Songs[0], 1)
+			for _, song := range library.Songs {
+				if song.Rank == 0.0 {
+					continue
+				}
+				fmt.Printf("%f\t%s\n", song.Rank, song.Path)
+			}
 		}
 	case "karma":
-		karma.LoadImpressions()
+		karma.Load()
 	case "add":
 		library.AddPaths(flag.Args())
 	default:
@@ -34,6 +44,7 @@ func main() {
 		rpc.SetupRPC()
 		listenForInput()
 		library.Load()
+		karma.Load()
 
 		observer.Observe("player.played", func(msg interface{}) {
 			song := msg.(library.Song)

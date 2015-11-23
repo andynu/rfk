@@ -39,7 +39,9 @@ RFK knows about your music from a songs.txt file that contains absolute paths to
     mkdir -p ~/rfk/data/$(hostname)/
     find / -name '*.mp3' > ~/rfk/data/$(hostname)/songs.txt
 
-## Building & Running
+## Build & Running
+
+### Server
 
     cd ~/rfk
     go build rfk
@@ -47,13 +49,19 @@ RFK knows about your music from a songs.txt file that contains absolute paths to
 
 You should now be listening to random music.
 
-----
+### Client: Build & Run
 
-## TODO
+    cd ~/rfk
+    go build rfk-cli
 
-* skip songs
+Now you can do two things:
 
+    ./rfk-cli skip
 
+or
+
+    ./rfk-cli reward
+  
 ----
 
 ## Attributions
