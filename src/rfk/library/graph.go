@@ -147,44 +147,49 @@ func traverseSongPaths(
 	}
 }
 
-func traverseGraph(root Node, visit func(node Node, depth int)) {
+// if the visit function returns false it will not traverse farther down that path.
+func traverseGraph(root Node, visit func(node Node, depth int) bool) {
 	visited := make(map[Node]bool)
 	depth := 0
 	_traverseGraph(root, depth, visited, visit)
 }
 
-func _traverseGraph(node Node, depth int, visited map[Node]bool, visit func(node Node, depth int)) {
+func _traverseGraph(node Node, depth int, visited map[Node]bool, visit func(node Node, depth int) bool) {
 	if node == nil || visited[node] {
 		return
 	}
-	visit(node, depth)
+	shouldRecurse := visit(node, depth)
 	visited[node] = true
-	for _, link := range node.Links() {
-		_traverseGraph(*link, depth+1, visited, visit)
+	if shouldRecurse {
+		for _, link := range node.Links() {
+			_traverseGraph(*link, depth+1, visited, visit)
+		}
 	}
 }
 func SpreadImpressionByPath(song *Song, impression int) {
 	fimp := float64(impression)
-	traverseGraph(song, func(node Node, depth int) {
+	traverseGraph(song, func(node Node, depth int) bool {
 		if depth > 3 {
-			return
+			return false
 		}
 		s, ok := node.(*Song)
 		if ok {
 			//log.Printf("simp: %s -> (%d) %s", song.Hash, depth, s)
 			s.Rank += fimp / math.Pow(2.0, float64(depth))
 		}
+		return true
 	})
 }
 
 func CountImpressionsByDepth(song *Song) {
 	depthCounts := make(map[int]int)
-	traverseGraph(song, func(node Node, depth int) {
+	traverseGraph(song, func(node Node, depth int) bool {
 		if depth > 5 {
-			return
+			return false
 		}
 		//fmt.Printf("%d\t%s\n", depth, node)
 		depthCounts[depth]++
+		return true
 	})
 
 	var sortedKeys []int
