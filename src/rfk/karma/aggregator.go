@@ -45,7 +45,7 @@ func Load() error {
 		song, err := library.ByHash(hash)
 		if err == nil {
 			//log.Printf("spread it %v %v", hash, impression)
-			song.PathGraphImpress(impression)
+			go song.PathGraphImpress(impression)
 		}
 	}
 	//log.Printf("%v", SongKarma)

@@ -177,7 +177,9 @@ func (song *Song) PathGraphImpress(impression int) {
 		s, ok := node.(*Song)
 		if ok {
 			//log.Printf("simp: %s -> (%d) %s", song.Hash, depth, s)
+			s.Lock()
 			s.Rank += fimp / math.Pow(2.0, float64(depth))
+			s.Unlock()
 		}
 		return true
 	})
