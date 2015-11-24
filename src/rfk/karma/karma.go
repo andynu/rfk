@@ -1,3 +1,4 @@
+// Interprets impressions into library.Song.Rank
 package karma
 
 import (
@@ -20,6 +21,7 @@ func init() {
 	logger = log.New(logfile, "", 0)
 }
 
+// Record a positive/negative impression of a Song.
 func Log(song library.Song, impression int) {
 	logger.Printf("%s\t%d", song.Hash, impression)
 }

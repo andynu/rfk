@@ -9,24 +9,23 @@ import (
 	"rfk/observer"
 )
 
-type Song struct {
-	Hash string
-	Path string
-	Rank float64
-	pathNode
-}
-
-func (s *Song) String() string {
-	return fmt.Sprintf("[Song %s %s]", s.Hash, s.Path)
-}
-
-var songsPath, songHashesPath string
-
-var PathRoots []Node
+// The list of Songs
 var Songs []*Song
+
+// Map from path to Song
 var songPathMap map[string]*Song
+
+// Map from hash to Song
 var songHashMap map[string][]*Song
 
+// The root Nodes for the path graph
+var PathRoots []Node
+
+// song file paths, used by Load() and AddPaths()
+var songsPath, songHashesPath string
+
+// loads Songs from either song_hashes.txt or songs.txt (first to exist).
+// loads the path graph
 func Load() {
 
 	songHashMap = make(map[string][]*Song, 1000)
@@ -44,11 +43,12 @@ func Load() {
 		panicOnErr(err)
 	}
 
-	observer.Notify("library.loaded", Song{})
+	observer.Notify("library.loaded", struct{}{})
 	log.Printf("Loaded %d songs", len(Songs))
 	PathRoots = LoadGraph(Songs)
 }
 
+// lookup Song by Song.Hash string
 func ByHash(hash string) (*Song, error) {
 	songs := songHashMap[hash]
 	log.Printf("DEBUG: songs:%v", songs)

@@ -10,8 +10,10 @@ import (
 	"strconv"
 )
 
+// Sum(impressions) by Song.Hash
 var SongKarma map[string]int
 
+// Build up the SongKarma map, and spread impressiosn to library.Song.Rank
 func Load() error {
 	SongKarma = make(map[string]int)
 

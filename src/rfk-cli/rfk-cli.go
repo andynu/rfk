@@ -1,3 +1,9 @@
+// rpc client to the rfk/rpc server.
+//
+//     ./rfk-cli skip
+//
+//     ./rfk-cli reward
+//
 package main
 
 import (
@@ -23,6 +29,7 @@ func main() {
 	}
 }
 
+// string command caller to the rpc with dummy in/out args.
 func simpleCall(cmd string) {
 	client := connect()
 	var in rfkrpc.In
@@ -33,6 +40,7 @@ func simpleCall(cmd string) {
 	}
 }
 
+// Connects to the running rpc server
 func connect() *rpc.Client {
 	client, err := rpc.DialHTTP("tcp", "127.0.0.1:7777")
 	if err != nil {

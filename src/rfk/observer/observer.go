@@ -1,3 +1,4 @@
+// Event hooks between packages
 package observer
 
 import (

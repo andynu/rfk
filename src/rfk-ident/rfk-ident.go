@@ -1,3 +1,34 @@
+// generates audio only checksums
+//
+// INPUT
+//
+// using the songs.txt (absolute paths to mp3s, one per line)
+//
+//    /absolute/path/song.mp3
+//    /absolute/path/other_song.mp3
+//
+// e.g.
+//
+//    find /music -name '*.mp3' > songs.txt
+//
+// OUTPUT
+//
+// a tab separated file of the hash, and the absolute path
+//
+//    8752c89b6212138f21488d4e775123a478a753c2	"/absolute/path/song.mp3"
+//    ce370b2059057e7e114206c748bf1b695e928861	"/absolute/path/other_song.mp3"
+//
+// RUN
+//
+// To execute the binary:
+//
+//    cat songs.txt | ./rfk-ident > song_hashes.txt
+//
+// Individual mp3 hash
+//
+//    ./rfk-ident /absolute/path/song.mp3
+//    8752c89b6212138f21488d4e775123a478a753c2	"/absolute/path/song.mp3"
+//
 package main
 
 import (
@@ -29,7 +60,6 @@ func main() {
 		input := bufio.NewScanner(os.Stdin)
 		for input.Scan() {
 			path := input.Text()
-			//log.Printf("scan %d. %q", count, path)
 			go audioFileChecksum(path)
 			count++
 		}
