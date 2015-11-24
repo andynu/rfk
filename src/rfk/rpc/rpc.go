@@ -1,3 +1,4 @@
+// rpc server endpoint
 package rpc
 
 import (

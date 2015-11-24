@@ -13,6 +13,8 @@ import (
 // Sum(impressions) by Song.Hash
 var SongKarma map[string]int
 
+var graph *library.Graph
+
 // Build up the SongKarma map, and spread impressiosn to library.Song.Rank
 func Load() error {
 	SongKarma = make(map[string]int)
@@ -43,7 +45,7 @@ func Load() error {
 		song, err := library.ByHash(hash)
 		if err == nil {
 			//log.Printf("spread it %v %v", hash, impression)
-			library.SpreadImpressionByPath(song, impression)
+			song.PathGraphImpress(impression)
 		}
 	}
 	//log.Printf("%v", SongKarma)

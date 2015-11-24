@@ -18,6 +18,8 @@ var songPathMap map[string]*Song
 // Map from hash to Song
 var songHashMap map[string][]*Song
 
+var graph *Graph
+
 // The root Nodes for the path graph
 var PathRoots []Node
 
@@ -45,7 +47,7 @@ func Load() {
 
 	observer.Notify("library.loaded", struct{}{})
 	log.Printf("Loaded %d songs", len(Songs))
-	PathRoots = LoadGraph(Songs)
+	PathRoots = graph.LoadGraph(Songs)
 }
 
 // lookup Song by Song.Hash string

@@ -10,6 +10,8 @@ import (
 
 const debug = false
 
+type Graph struct{}
+
 type Node interface {
 	Links() []*Node
 	Link(*Node) error
@@ -49,7 +51,7 @@ func (n pathNode) String() string {
 	return fmt.Sprintf("[pathNode %s]", n.Path)
 }
 
-func LoadGraph(songs []*Song) (roots []Node) {
+func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 	log.Println("Loading graph")
 	var lastDepth int
 	var lastNode *Node
@@ -166,7 +168,7 @@ func _traverseGraph(node Node, depth int, visited map[Node]bool, visit func(node
 		}
 	}
 }
-func SpreadImpressionByPath(song *Song, impression int) {
+func (song *Song) PathGraphImpress(impression int) {
 	fimp := float64(impression)
 	traverseGraph(song, func(node Node, depth int) bool {
 		if depth > 3 {
