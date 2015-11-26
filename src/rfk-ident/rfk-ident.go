@@ -52,6 +52,7 @@ func main() {
 	count := 0
 	if len(files) != 0 {
 		// from Params
+		count = len(files)
 		for _, path := range files {
 			go audioFileChecksum(path)
 		}
@@ -66,8 +67,8 @@ func main() {
 	}
 
 	for count != 0 {
-		count--
 		fmt.Println(<-out)
+		count--
 	}
 }
 
