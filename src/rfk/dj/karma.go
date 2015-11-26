@@ -32,18 +32,15 @@ func karmaSong() func() (library.Song, error) {
 					songCh <- song
 				}
 			}
-			// after we runout, return nothing forever
-			for {
-				songCh <- nil
-			}
+			close(songCh)
 		}()
 	})
 	return func() (library.Song, error) {
-		nextSong := <-songCh
-		if nextSong == nil {
-			return library.Song{}, fmt.Errorf("NoSong")
-		} else {
+		nextSong, ok := <-songCh
+		if ok {
 			return *nextSong, nil
+		} else {
+			return library.Song{}, fmt.Errorf("NoSong")
 		}
 	}
 }
