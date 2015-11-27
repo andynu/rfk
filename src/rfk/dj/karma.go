@@ -35,6 +35,7 @@ func karmaSong() func() (library.Song, error) {
 			close(songCh)
 		}()
 	})
+
 	return func() (library.Song, error) {
 		nextSong, ok := <-songCh
 		if ok {

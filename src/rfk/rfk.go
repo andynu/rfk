@@ -72,6 +72,7 @@ func main() {
 				log.Printf("rfk: %v", err)
 				time.Sleep(1 * time.Second)
 			}
+			//panic("howmanygoroutines?")
 		}
 	}
 }

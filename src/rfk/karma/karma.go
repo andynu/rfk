@@ -7,9 +7,11 @@ import (
 	"path"
 	"rfk/config"
 	"rfk/library"
+	"sync"
 )
 
 var logger *log.Logger
+var mu sync.Mutex
 
 func init() {
 	logfile, err := os.OpenFile(path.Join(config.Config.DataPath, "impression.log"),
@@ -23,5 +25,7 @@ func init() {
 
 // Record a positive/negative impression of a Song.
 func Log(song library.Song, impression int) {
+	mu.Lock()
 	logger.Printf("%s\t%d", song.Hash, impression)
+	mu.Unlock()
 }
