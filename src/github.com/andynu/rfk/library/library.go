@@ -3,10 +3,10 @@ package library
 
 import (
 	"fmt"
+	"github.com/andynu/rfk/config"
+	"github.com/andynu/rfk/observer"
 	"log"
 	"path"
-	"rfk/config"
-	"rfk/observer"
 )
 
 // The list of Songs

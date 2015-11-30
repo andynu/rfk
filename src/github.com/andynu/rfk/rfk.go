@@ -4,13 +4,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/andynu/rfk/dj"
+	"github.com/andynu/rfk/karma"
+	"github.com/andynu/rfk/library"
+	"github.com/andynu/rfk/observer"
+	"github.com/andynu/rfk/player"
+	"github.com/andynu/rfk/rpc"
 	"log"
-	"rfk/dj"
-	"rfk/karma"
-	"rfk/library"
-	"rfk/observer"
-	"rfk/player"
-	"rfk/rpc"
 	"time"
 )
 

@@ -2,9 +2,9 @@ package dj
 
 import (
 	"fmt"
+	"github.com/andynu/rfk/karma"
+	"github.com/andynu/rfk/library"
 	"math/rand"
-	"rfk/karma"
-	"rfk/library"
 	"time"
 )
 

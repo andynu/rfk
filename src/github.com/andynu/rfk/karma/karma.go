@@ -2,11 +2,11 @@
 package karma
 
 import (
+	"github.com/andynu/rfk/config"
+	"github.com/andynu/rfk/library"
 	"log"
 	"os"
 	"path"
-	"rfk/config"
-	"rfk/library"
 	"sync"
 )
 

@@ -3,8 +3,8 @@ package dj
 
 import (
 	"fmt"
+	"github.com/andynu/rfk/library"
 	"log"
-	"rfk/library"
 )
 
 var djs = []func() (library.Song, error){

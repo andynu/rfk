@@ -2,12 +2,12 @@
 package rpc
 
 import (
+	"github.com/andynu/rfk/karma"
+	"github.com/andynu/rfk/player"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
-	"rfk/karma"
-	"rfk/player"
 )
 
 type In int
