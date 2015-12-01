@@ -8,10 +8,10 @@ package main
 
 import (
 	"fmt"
+	rfkrpc "github.com/andynu/rfk/server/rpc"
 	"log"
 	"net/rpc"
 	"os"
-	rfkrpc "rfk/rpc"
 )
 
 func main() {
