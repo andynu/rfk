@@ -19,8 +19,12 @@ func init() {
 	Config.DataPath = dataPath()
 }
 
-func Load(configPath string) {
-	config, err := loadJsonConfig(configPath)
+func Load(configPath *string) {
+	if configPath == nil || *configPath == "" {
+		defaultPath := "./config.json"
+		configPath = &defaultPath
+	}
+	config, err := loadJsonConfig(*configPath)
 	if err != nil {
 		panic(err)
 	}

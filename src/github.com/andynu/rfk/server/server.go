@@ -20,7 +20,7 @@ func main() {
 	configPath := flag.String("c", "", "config path")
 	flag.Parse()
 
-	config.Load(*configPath)
+	config.Load(configPath)
 
 	switch *command {
 	case "graph":
