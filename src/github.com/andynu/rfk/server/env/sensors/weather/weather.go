@@ -1,11 +1,65 @@
-package main
+package weather
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/env"
+	"github.com/andynu/rfk/server/observer"
 )
+
+func init() {
+	observer.Observe("config.loaded", func(msg interface{}) {
+		if config.Config.WeatherUndergroundKey == "" {
+			log.Printf("env: sensor: weather [disabled] - No Weather Underground Key in Config")
+			return
+		}
+		var weatherSensor *WeatherSensor
+		env.RegisterSensor(weatherSensor)
+		log.Printf("env: sensor: weather [enabled] - OK")
+	})
+}
+
+type WeatherSensor struct {
+	LastResponse *WUHourlyResponse
+}
+
+func (w *WeatherSensor) Sample() *env.Sample {
+
+	//if w.LastResponse == nil || w.LastResponse.Stale() {
+	//	w.LastResponse = pollWeatherUnderground()
+	//}
+	sample := env.Sample{Timestamp: 0, SensorName: "Weather", Value: "Rain"}
+	return &sample
+}
+
+func pollWeatherUnderground() *WUHourlyResponse {
+	key := config.Config.WeatherUndergroundKey
+	location := config.Config.WeatherUndergroundLocation
+	hourlyWeatherUrl := "http://api.wunderground.com/api/" + key + "/hourly/q/" + location + ".json"
+	fmt.Println(hourlyWeatherUrl)
+
+	res, err := http.Get(hourlyWeatherUrl)
+	if err != nil {
+		panic(err)
+	}
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var hourlyWeather *WUHourlyResponse
+	err = json.Unmarshal(body, hourlyWeather)
+	if err != nil {
+		panic(err)
+	}
+	return hourlyWeather
+}
 
 type WUEnglishMetric struct {
 	English string `json:"english"`
@@ -78,55 +132,6 @@ type WUHourlyResponse struct {
 	} `json:"hourly_forecast"`
 }
 
-func main() {
-	config, err := loadJsonConfig()
-	if err != nil {
-		panic(err)
-	}
-	weatherUndergroundKey := config["weather_underground_key"]
-	location := config["weather_underground_location"] // e.g. // "CA/San_Francisco"
-	hourlyWeatherUrl := "http://api.wunderground.com/api/" + weatherUndergroundKey + "/hourly/q/" + location + ".json"
-	fmt.Println(hourlyWeatherUrl)
-
-	res, err := http.Get(hourlyWeatherUrl)
-	if err != nil {
-		panic(err)
-	}
-	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		panic(err)
-	}
-
-	var hourlyWeather WUHourlyResponse
-	err = json.Unmarshal(body, &hourlyWeather)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%s", body)
-	fmt.Println("---")
-	fmt.Printf("%s", hourlyWeather)
-}
-
-// TODO: This should be in the data dir, or generic home ...
-func jsonConfigFile() string {
-	return "/home/andy/rfk/weather.json"
-}
-
-// loads a single level hash config. e.g. { "a": "first", "b": "second" }
-func loadJsonConfig() (map[string]string, error) {
-	type jsonConfig map[string]string
-	var config jsonConfig
-
-	file, err := ioutil.ReadFile(jsonConfigFile())
-	if err != nil {
-		return config, err
-	}
-
-	err = json.Unmarshal(file, &config)
-	if err != nil {
-		return config, err
-	}
-
-	return config, nil
+func (r *WUHourlyResponse) Stale() bool {
+	return false // TODO: Check times
 }

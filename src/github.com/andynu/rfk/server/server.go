@@ -4,15 +4,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/andynu/rfk/server/config"
 	"github.com/andynu/rfk/server/dj"
+	"github.com/andynu/rfk/server/env"
+	_ "github.com/andynu/rfk/server/env/sensors/weather"
 	"github.com/andynu/rfk/server/karma"
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
 	"github.com/andynu/rfk/server/player"
 	"github.com/andynu/rfk/server/rpc"
-	"log"
-	"time"
 )
 
 func main() {
@@ -49,6 +52,9 @@ func main() {
 		listenForInput()
 		library.Load()
 		karma.Load()
+
+		env.Prime()
+		env.LogFull()
 
 		observer.Observe("player.played", func(msg interface{}) {
 			song := msg.(library.Song)

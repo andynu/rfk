@@ -6,10 +6,14 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/andynu/rfk/server/observer"
 )
 
 type ConfigType struct {
-	DataPath string
+	DataPath                   string
+	WeatherUndergroundKey      string
+	WeatherUndergroundLocation string
 }
 
 var Config ConfigType
@@ -29,6 +33,10 @@ func Load(configPath *string) {
 		panic(err)
 	}
 	Config.DataPath = config["data_dir"]
+	Config.WeatherUndergroundKey = config["weather_underground_key"]
+	Config.WeatherUndergroundLocation = config["weather_underground_location"]
+
+	observer.Notify("config.loaded", struct{}{})
 }
 
 func dataPath() string {
