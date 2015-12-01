@@ -3,8 +3,8 @@ package library
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/config"
-	"github.com/andynu/rfk/observer"
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/observer"
 	"log"
 	"path"
 )

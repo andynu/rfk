@@ -3,7 +3,7 @@ package dj
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/library"
+	"github.com/andynu/rfk/server/library"
 	"log"
 )
 

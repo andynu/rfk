@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/andynu/rfk/player"
+	"github.com/andynu/rfk/server/player"
 	"os"
 	"strings"
 )

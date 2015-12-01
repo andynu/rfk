@@ -2,9 +2,9 @@ package dj
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/karma"
-	"github.com/andynu/rfk/library"
-	"github.com/andynu/rfk/observer"
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 	"log"
 	"sort"
 )

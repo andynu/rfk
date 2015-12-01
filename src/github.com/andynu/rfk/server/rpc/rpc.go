@@ -2,8 +2,8 @@
 package rpc
 
 import (
-	"github.com/andynu/rfk/karma"
-	"github.com/andynu/rfk/player"
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/player"
 	"log"
 	"net"
 	"net/http"

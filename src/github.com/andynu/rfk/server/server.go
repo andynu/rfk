@@ -4,19 +4,23 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/andynu/rfk/dj"
-	"github.com/andynu/rfk/karma"
-	"github.com/andynu/rfk/library"
-	"github.com/andynu/rfk/observer"
-	"github.com/andynu/rfk/player"
-	"github.com/andynu/rfk/rpc"
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/dj"
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
+	"github.com/andynu/rfk/server/player"
+	"github.com/andynu/rfk/server/rpc"
 	"log"
 	"time"
 )
 
 func main() {
-	command := flag.String("c", "", "command")
+	command := flag.String("e", "", "command")
+	configPath := flag.String("c", "", "config path")
 	flag.Parse()
+
+	config.Load(*configPath)
 
 	switch *command {
 	case "graph":

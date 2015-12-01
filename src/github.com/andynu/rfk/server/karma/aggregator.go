@@ -2,8 +2,8 @@ package karma
 
 import (
 	"encoding/csv"
-	"github.com/andynu/rfk/config"
-	"github.com/andynu/rfk/library"
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/library"
 	"log"
 	"os"
 	"path"
