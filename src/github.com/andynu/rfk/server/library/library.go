@@ -3,10 +3,11 @@ package library
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/server/config"
-	"github.com/andynu/rfk/server/observer"
 	"log"
 	"path"
+
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/observer"
 )
 
 // The list of Songs
@@ -53,7 +54,6 @@ func Load() {
 // lookup Song by Song.Hash string
 func ByHash(hash string) (*Song, error) {
 	songs := songHashMap[hash]
-	log.Printf("DEBUG: songs:%v", songs)
 	if songs != nil {
 		return songs[0], nil
 	}

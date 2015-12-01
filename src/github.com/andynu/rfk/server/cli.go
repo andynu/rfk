@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/andynu/rfk/server/player"
+	"log"
 	"os"
 	"strings"
+
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/player"
 )
 
 func listenForInput() {
@@ -14,10 +16,18 @@ func listenForInput() {
 		for {
 			text, _ := reader.ReadString('\n')
 			text = strings.TrimSuffix(text, "\n")
-			fmt.Printf("got %q\n", text)
 			switch text {
 			case "n":
+				log.Printf("cmd: n - Stop")
 				player.Stop()
+			case "s":
+				log.Printf("cmd: s - Skip")
+				player.Skip()
+			case "r":
+				log.Printf("cmd: r - Reward")
+				karma.Log(player.CurrentSong, 1)
+			default:
+				log.Printf("cmd: %q - unknown command", text)
 			}
 		}
 	}()
