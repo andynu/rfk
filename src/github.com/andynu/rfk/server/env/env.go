@@ -4,20 +4,21 @@ package env
 import (
 	"log"
 	"sync"
+	"time"
 )
 
 var sensors_mu sync.Mutex
 var sensors []Sensor
-var samples []*Sample
+var samples []Sample
 
 type Sample struct {
-	Timestamp  int
+	Timestamp  time.Time
 	SensorName string
 	Value      string
 }
 
 type Sensor interface {
-	Sample() *Sample
+	Sample() []Sample
 }
 
 func RegisterSensor(sensor Sensor) {
@@ -28,7 +29,9 @@ func RegisterSensor(sensor Sensor) {
 
 func Prime() {
 	for _, sensor := range sensors {
-		samples = append(samples, sensor.Sample())
+		for _, sample := range sensor.Sample() {
+			samples = append(samples, sample)
+		}
 	}
 }
 
