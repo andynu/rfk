@@ -25,6 +25,14 @@ Setting up your go env for this project:
     export GO15VENDOREXPERIMENT=1
     export GOPATH=~/go
 
+### Install rfk
+
+Grab a copy of this repository via the `go get` command:
+
+    go get github.com/andynu/rfk
+
+This will put the code in ~/go/src/github.com/andynu/rfk
+
 ### Install mpg123
 
 For the moment only files that mpg123 can play are supported. mpg123 is expected to be in your path.
