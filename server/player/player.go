@@ -3,11 +3,13 @@ package player
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/server/library"
-	"github.com/andynu/rfk/server/observer"
 	"log"
 	"os"
 	"os/exec"
+	"sync"
+
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 
 	"github.com/dhowden/tag"
 )
@@ -15,7 +17,11 @@ import (
 const playerBin string = "mpg123"
 
 var CurrentSong library.Song
+
 var playerCmd *exec.Cmd
+
+var playing_mu sync.Mutex
+var playing bool = true
 
 func Play(song library.Song) error {
 	CurrentSong = song
@@ -42,6 +48,22 @@ func Stop() error {
 func Skip() error {
 	observer.Notify("player.skip", CurrentSong)
 	return Stop()
+}
+
+func IsPlaying() bool {
+	playing_mu.Lock()
+	isPlaying := playing
+	playing_mu.Unlock()
+	return isPlaying
+}
+
+func TogglePlayPause() {
+	playing_mu.Lock()
+	playing = !playing
+	playing_mu.Unlock()
+	if !playing {
+		Stop()
+	}
 }
 
 func logMetadata(path string) {

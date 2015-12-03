@@ -23,6 +23,9 @@ func consoleInputListener() {
 			case "s":
 				log.Printf("cmd: s - Skip")
 				player.Skip()
+			case "p":
+				log.Printf("cmd: p - PlayPause")
+				player.TogglePlayPause()
 			case "r":
 				log.Printf("cmd: r - Reward")
 				karma.Log(player.CurrentSong, 1)

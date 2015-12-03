@@ -72,6 +72,11 @@ func main() {
 
 		for {
 
+			if !player.IsPlaying() {
+				time.Sleep(1 * time.Second)
+				continue
+			}
+
 			song, err := dj.NextSong()
 			if err != nil {
 				log.Printf("rfk: %v", err)
