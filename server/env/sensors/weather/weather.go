@@ -32,7 +32,15 @@ type WeatherSensor struct {
 func (w *WeatherSensor) Sample() []env.Sample {
 
 	now := time.Now()
-	forecast := w.updatedWeather(now)
+	forecast := w.updatedWeather(now.Add(time.Hour))
+
+	if forecast.IsEmpty() {
+		log.Printf("env: sensor: weather: err: empty forecast")
+		return nil
+	}
+
+	//log.Printf("env: sensor: weather: sample: %v", forecast.IsEmpty())
+	//log.Printf("env: sensor: weather: sample: %v", forecast)
 
 	var samples []env.Sample
 
@@ -51,6 +59,7 @@ func (w *WeatherSensor) Sample() []env.Sample {
 
 func (w *WeatherSensor) updatedWeather(targetTime time.Time) WUHourlyForecast {
 	if w.LastResponse == nil || w.LastResponse.stale(targetTime) {
+		log.Printf("env: sensor: weather: polling...")
 		hourlyWeather, err := w.poll()
 		if err != nil {
 			log.Printf("env: sensor: weather: poll err: %v", err)
@@ -69,6 +78,7 @@ func (w *WeatherSensor) poll() (WUHourlyResponse, error) {
 		return hourlyWeather, err
 	}
 	hourlyWeather, err = w.parse(responseJSON)
+	// log.Printf("DEBUG: %v", hourlyWeather)
 	if err == nil {
 		log.Printf("env: sensor: weather: poll() => success")
 	}
@@ -79,6 +89,7 @@ func (w *WeatherSensor) fetch() ([]byte, error) {
 	key := config.Config.WeatherUndergroundKey
 	location := config.Config.WeatherUndergroundLocation
 	hourlyWeatherUrl := "http://api.wunderground.com/api/" + key + "/hourly/q/" + location + ".json"
+	log.Printf("DEBUG: url=%v", hourlyWeatherUrl)
 
 	res, err := http.Get(hourlyWeatherUrl)
 	if err != nil {
@@ -89,6 +100,7 @@ func (w *WeatherSensor) fetch() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	//log.Printf("DEBUG: body=%v", string(body))
 	return body, nil
 }
 
@@ -169,6 +181,11 @@ type WUHourlyForecast struct {
 	Snow      WUEnglishMetric `json:"snow"`
 	Pop       string          `json:"pop"`
 	Mslp      WUEnglishMetric `json:"mslp"`
+}
+
+func (w *WUHourlyForecast) IsEmpty() bool {
+	var nilHourlyForecast WUHourlyForecast
+	return ((*w) == nilHourlyForecast)
 }
 
 func (r *WUHourlyResponse) stale(targetTime time.Time) bool {
