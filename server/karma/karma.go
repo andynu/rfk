@@ -2,12 +2,13 @@
 package karma
 
 import (
-	"github.com/andynu/rfk/server/config"
-	"github.com/andynu/rfk/server/library"
 	"log"
 	"os"
 	"path"
 	"sync"
+
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/library"
 )
 
 var logger *log.Logger
@@ -21,6 +22,7 @@ func init() {
 		panic(err)
 	}
 	logger = log.New(logfile, "", 0)
+
 }
 
 // Record a positive/negative impression of a Song.

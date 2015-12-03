@@ -1,4 +1,4 @@
-package main
+package console
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"github.com/andynu/rfk/server/player"
 )
 
-func consoleInputListener() {
+func InputListener() {
 	go func() {
 		reader := bufio.NewReader(os.Stdin)
 		for {

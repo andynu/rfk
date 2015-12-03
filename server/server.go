@@ -3,11 +3,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/console"
 	"github.com/andynu/rfk/server/dj"
 	"github.com/andynu/rfk/server/env"
 	_ "github.com/andynu/rfk/server/env/sensors/weather"
@@ -26,37 +26,17 @@ func main() {
 	config.Load(configPath)
 
 	switch *command {
-	case "graph":
-		library.Load()
-		karma.Load()
-		for root := range library.PathRoots {
-			fmt.Printf("root : %v\n", root)
-			fmt.Printf("song: %v\n", library.Songs[0])
-			fmt.Printf("song: %v\n", &library.Songs[0])
-			//library.CountImpressionsByDepth(library.Songs[0])
-			//library.SpreadImpressionByPath(library.Songs[0], 1)
-			for _, song := range library.Songs {
-				if song.Rank == 0.0 {
-					continue
-				}
-				fmt.Printf("%f\t%s\n", song.Rank, song.Path)
-			}
-		}
-	case "karma":
-		karma.Load()
 	case "add":
 		library.AddPaths(flag.Args())
+
 	default:
 
 		checkPrereqs()
-		consoleInputListener()
+		console.InputListener()
 		rpc.SetupRPC()
 
 		library.Load()
 		karma.Load()
-
-		env.Prime()
-		env.LogFull()
 
 		observer.Observe("player.played", func(msg interface{}) {
 			song := msg.(library.Song)
@@ -69,6 +49,9 @@ func main() {
 			log.Printf("Played %v", song)
 			karma.Log(song, -2)
 		})
+
+		env.Prime()
+		env.LogFull()
 
 		for {
 
