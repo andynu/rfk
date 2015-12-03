@@ -10,7 +10,7 @@ import (
 	"github.com/andynu/rfk/server/player"
 )
 
-func listenForInput() {
+func consoleInputListener() {
 	go func() {
 		reader := bufio.NewReader(os.Stdin)
 		for {

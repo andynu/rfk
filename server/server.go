@@ -48,8 +48,10 @@ func main() {
 		library.AddPaths(flag.Args())
 	default:
 
+		checkPrereqs()
+		consoleInputListener()
 		rpc.SetupRPC()
-		listenForInput()
+
 		library.Load()
 		karma.Load()
 
