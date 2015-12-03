@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 func main() {
-	fmt.Printf("RFK. This will be the command dispatcher")
+	fmt.Println("RFK. This will be the command dispatcher")
 }
