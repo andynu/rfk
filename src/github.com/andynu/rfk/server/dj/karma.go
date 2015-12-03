@@ -2,10 +2,10 @@ package dj
 
 import (
 	"fmt"
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 	"log"
-	"rfk/karma"
-	"rfk/library"
-	"rfk/observer"
 	"sort"
 )
 
@@ -35,6 +35,7 @@ func karmaSong() func() (library.Song, error) {
 			close(songCh)
 		}()
 	})
+
 	return func() (library.Song, error) {
 		nextSong, ok := <-songCh
 		if ok {

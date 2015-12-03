@@ -4,13 +4,19 @@ package dj
 import (
 	"fmt"
 	"log"
-	"rfk/library"
+
+	"github.com/andynu/rfk/server/library"
 )
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	//karmaSong(),
 	randomNonNegativeRankSong,
+	//karmaSong(),
+}
+
+var djNames = []string{
+	"requests",
+	"randomNonNegativeRankSong",
 }
 
 func NextSong() (library.Song, error) {
@@ -21,7 +27,8 @@ func NextSong() (library.Song, error) {
 	for i, dj := range djs {
 		next_song, err = dj()
 		if err == nil {
-			log.Printf("Using DJ:%v", i)
+			log.Printf("")
+			log.Printf("Using DJ:%v:%v", i, djNames[i])
 			return next_song, nil
 		}
 	}

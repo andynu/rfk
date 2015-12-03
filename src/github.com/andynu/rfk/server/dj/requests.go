@@ -3,7 +3,7 @@ package dj
 import (
 	"container/list"
 	"errors"
-	"rfk/library"
+	"github.com/andynu/rfk/server/library"
 )
 
 var requests = list.New()

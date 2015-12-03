@@ -53,16 +53,15 @@ func (n pathNode) String() string {
 
 func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 	log.Println("Loading graph")
+	songNodeCount, pathNodeCount, visitCount := 0, 0, 0
 	var lastDepth int
 	var lastNode *Node
 	byPath := make(map[string]*Node)
 	rootPaths := make(map[string]bool)
 
 	traverseSongPaths(songs, func(partialPath string, pathDepth int, song *Song) {
+		visitCount++
 		depthDiff := math.Abs(float64(lastDepth - pathDepth))
-		if debug {
-			log.Printf("Depthdiff %d - %d, %d", int(depthDiff), lastDepth, pathDepth)
-		}
 		if depthDiff > 2 {
 			lastNode = nil
 		}
@@ -76,6 +75,7 @@ func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 			if debug {
 				log.Printf("add song: %v, %v => %v", &lastNode, &song, song)
 			}
+			songNodeCount++
 
 		} else {
 
@@ -90,6 +90,7 @@ func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 					log.Printf("add node: %v => %v", &node, node)
 				}
 				byPath[partialPath] = &node
+				pathNodeCount++
 			}
 
 			if pathDepth == 0 {
@@ -107,7 +108,7 @@ func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 		}
 
 	})
-	log.Println("Loading graph complete")
+	log.Printf("Loading graph complete : songs=%d pathNodes=%d visits=%d", songNodeCount, pathNodeCount, visitCount)
 
 	//for path, node := range byPath {
 	//	log.Printf("%v : %v => %v", path, &node, node)
@@ -176,7 +177,6 @@ func (song *Song) PathGraphImpress(impression int) {
 		}
 		s, ok := node.(*Song)
 		if ok {
-			//log.Printf("simp: %s -> (%d) %s", song.Hash, depth, s)
 			s.Lock()
 			s.Rank += fimp / math.Pow(2.0, float64(depth))
 			s.Unlock()

@@ -5,18 +5,25 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"rfk/dj"
-	"rfk/karma"
-	"rfk/library"
-	"rfk/observer"
-	"rfk/player"
-	"rfk/rpc"
 	"time"
+
+	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/dj"
+	"github.com/andynu/rfk/server/env"
+	_ "github.com/andynu/rfk/server/env/sensors/weather"
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
+	"github.com/andynu/rfk/server/player"
+	"github.com/andynu/rfk/server/rpc"
 )
 
 func main() {
-	command := flag.String("c", "", "command")
+	command := flag.String("e", "", "command")
+	configPath := flag.String("c", "", "config path")
 	flag.Parse()
+
+	config.Load(configPath)
 
 	switch *command {
 	case "graph":
@@ -46,6 +53,9 @@ func main() {
 		library.Load()
 		karma.Load()
 
+		env.Prime()
+		env.LogFull()
+
 		observer.Observe("player.played", func(msg interface{}) {
 			song := msg.(library.Song)
 			log.Printf("Played %v", song)
@@ -72,6 +82,7 @@ func main() {
 				log.Printf("rfk: %v", err)
 				time.Sleep(1 * time.Second)
 			}
+			//panic("howmanygoroutines?")
 		}
 	}
 }

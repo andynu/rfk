@@ -3,11 +3,11 @@ package player
 
 import (
 	"fmt"
+	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 	"log"
 	"os"
 	"os/exec"
-	"rfk/library"
-	"rfk/observer"
 
 	"github.com/dhowden/tag"
 )

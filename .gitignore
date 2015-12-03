@@ -2,3 +2,9 @@ data
 bin
 rfk-cli
 abc
+.idea
+rfk.iml
+weather.json
+rfk-server
+rfk-ident
+config.json
