@@ -67,16 +67,6 @@ or
 
 ----
 
-TODOS
-
-- [ ] Prereq check: mpg123
-- [ ] Data check, no directories? Make them!
-- [ ] Library check, no files? Prompt for path.
-- [ ] rfk/env infrastructure
-- [ ] rfk/env/sensors/weather
-
-----
-
 ## Attributions
 
 * Thanks to David Howden for the dhowden/tag library, used for audio only checksums and mp3 metadata extraction. See [LICENSE](src/github.com/dhowden/tag/LICENSE)
