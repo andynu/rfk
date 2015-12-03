@@ -10,7 +10,7 @@ import (
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	randomNonNegativeRankSong,
+	randomNormalRankSong,
 	//karmaSong(),
 }
 

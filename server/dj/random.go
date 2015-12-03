@@ -2,10 +2,11 @@ package dj
 
 import (
 	"fmt"
-	"github.com/andynu/rfk/server/karma"
-	"github.com/andynu/rfk/server/library"
 	"math/rand"
 	"time"
+
+	"github.com/andynu/rfk/server/karma"
+	"github.com/andynu/rfk/server/library"
 )
 
 func randomSong() (library.Song, error) {
@@ -35,4 +36,37 @@ func randomNonNegativeRankSong() (library.Song, error) {
 		return library.Song{}, fmt.Errorf("NegSong")
 	}
 	return song, nil
+}
+
+func randomNormalNonNegRankSong() (library.Song, error) {
+	rand.Seed(time.Now().UnixNano())
+	idx := normalRand(len(library.Songs) - 1)
+	song := *library.Songs[idx]
+	if song.Rank < 0 {
+		return library.Song{}, fmt.Errorf("NegSong")
+	}
+	return song, nil
+}
+
+func randomNormalRankSong() (library.Song, error) {
+	rand.Seed(time.Now().UnixNano())
+	idx := normalRand(len(library.Songs) - 1)
+	song := *library.Songs[idx]
+	return song, nil
+}
+
+// a random normal as sampled from a normal distribution.
+// bound between [0, max]
+func normalRand(max int) int {
+	maxf := float64(max)
+	mean := float64(maxf / 2.0)
+	stdDev := float64(maxf / 2.0)
+	sample := rand.NormFloat64()*stdDev + mean
+	if sample < 0 {
+		sample = 0.0
+	}
+	if sample > maxf {
+		sample = maxf
+	}
+	return int(sample)
 }
