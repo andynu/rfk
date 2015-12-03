@@ -22,7 +22,7 @@ You'll need go. See https://golang.org/dl/
 Setting up your go env for this project:
 
     export PATH=$PATH:~/go/bin
-    export GOPATH=~/go:~/rfk
+    export GOPATH=~/go
 
 ### Install mpg123
 
@@ -42,7 +42,7 @@ RFK knows about your music from a songs.txt file that contains absolute paths to
 ## Build 
 
 
-    cd ~/rfk
+    cd ~/go/src/github.com/andynu/rfk
     make
 
 
