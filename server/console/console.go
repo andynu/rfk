@@ -42,6 +42,9 @@ func InputListener() {
 				term := strings.Join(args[1:], " ")
 				log.Printf("cmd: request - %q", term)
 				request(term)
+			case "clear":
+				log.Printf("cmd: clear request")
+				clearRequests()
 			default:
 				log.Printf("cmd: %q - unknown command", text)
 			}
@@ -68,4 +71,9 @@ func request(term string) {
 	songs := library.Search(term)
 	dj.Request(songs)
 	fmt.Printf("Requested %d songs\n", len(songs))
+}
+
+func clearRequests() {
+	dj.ClearRequests()
+	fmt.Printf("Requests Cleared\n")
 }

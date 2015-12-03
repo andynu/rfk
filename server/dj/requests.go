@@ -5,23 +5,18 @@ import (
 	"errors"
 
 	"github.com/andynu/rfk/server/library"
-
-	"log"
+	"sync"
 )
 
-var requests *list.List
-func init() {
-	requests = list.New()
-}
+var requests_mu sync.Mutex
+var requests = list.New()
 
 func requestedSong() (library.Song, error) {
-	if requests.Len() > 0 {
-		log.Printf("requestCount: %d", requests.Len())
-		val := pop(requests).Value
-		song, ok := val.(library.Song)
-		if ok {
-			return song, nil
-		}
+	requests_mu.Lock()
+	defer func() { requests_mu.Unlock() }()
+	if requests.Len() >= 0 {
+		song := pop(requests).Value.(library.Song)
+		return song, nil
 	}
 	return library.Song{}, errors.New("NoRequests")
 }
@@ -33,7 +28,15 @@ func pop(list *list.List) *list.Element {
 }
 
 func Request(songs []*library.Song) {
+	requests_mu.Lock()
 	for _, song := range songs {
 		requests.PushBack(*song)
 	}
+	requests_mu.Unlock()
+}
+
+func ClearRequests() {
+	requests_mu.Lock()
+	requests = list.New()
+	requests_mu.Unlock()
 }
