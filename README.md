@@ -22,6 +22,7 @@ You'll need go. See https://golang.org/dl/
 Setting up your go env for this project:
 
     export PATH=$PATH:~/go/bin
+    export GO15VENDOREXPERIMENT=1
     export GOPATH=~/go
 
 ### Install mpg123
