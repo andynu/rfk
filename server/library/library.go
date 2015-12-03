@@ -8,6 +8,7 @@ import (
 
 	"github.com/andynu/rfk/server/config"
 	"github.com/andynu/rfk/server/observer"
+	"strings"
 )
 
 // The list of Songs
@@ -58,6 +59,17 @@ func ByHash(hash string) (*Song, error) {
 		return songs[0], nil
 	}
 	return &Song{}, fmt.Errorf("UnknownHash")
+}
+
+// find songs by path substring
+func Search(term string) []*Song {
+	var songs []*Song
+	for _, song := range Songs {
+		if strings.Contains(song.Path, term) {
+			songs = append(songs, song)
+		}
+	}
+	return songs
 }
 
 func panicOnErr(err error) {

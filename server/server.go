@@ -21,6 +21,7 @@ import (
 func main() {
 	command := flag.String("e", "", "command")
 	configPath := flag.String("c", "", "config path")
+	startPaused := flag.Bool("paused", false, "start paused")
 	flag.Parse()
 
 	config.Load(configPath)
@@ -37,6 +38,10 @@ func main() {
 
 		library.Load()
 		karma.Load()
+
+		if *startPaused {
+			player.TogglePlayPause()
+		}
 
 		observer.Observe("player.played", func(msg interface{}) {
 			song := msg.(library.Song)
