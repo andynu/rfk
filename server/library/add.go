@@ -12,8 +12,9 @@ import (
 //
 // A 100% go version of `find <path> -name '*.mp3' > songs.txt`
 func AddPaths(paths []string) {
-	f, err := os.OpenFile(songsPath, os.O_APPEND|os.O_WRONLY, 0600)
-	panicOnErr(err)
+	f, err := os.OpenFile(songsPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0660)
+	if err != nil {}
+	anicOnErr(fmt.Errorf("%q: %v", songsPath, err))
 	mp3Count := 0
 
 	for _, path := range paths {

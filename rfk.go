@@ -13,26 +13,27 @@ func main() {
 	switch args[0] {
 	case "server":
 		fmt.Println("Running server...")
-		blockRun("rfk-server", args[1:])
+		execRun("rfk-server", args[1:])
 	case "skip", "reward", "play", "pause":
-		blockRun("rfk-cli", args[0:0])
+		execRun("rfk-cli", args[0:0])
 	default:
 		fmt.Printf("Unknown command %q\n", args)
 	}
 }
 
-func blockRun(cmd string, args []string) {
-	foundCmd, err := exec.LookPath("rfk-server")
+func execRun(cmd string, args []string) {
+	binary, err := exec.LookPath("rfk-server")
 	panicErr(err)
-	fmt.Printf("running: %q\n", foundCmd)
+	fmt.Printf("running: %q\n", binary)
 
-	//// not a fork!
-	//command := exec.Command(foundCmd, args...)
-	//err = command.Run()
-	//panicErr(err)
-	//command.Wait()
+  var argsWithBinary []string
+  argsWithBinary = append(argsWithBinary, binary)
+  for _, arg := range args {
+    argsWithBinary = append(argsWithBinary, arg)
+  }
 
-	_, err = syscall.ForkExec(foundCmd, args, nil)
+  env := os.Environ()
+	err = syscall.Exec(binary, argsWithBinary, env)
 	panicErr(err)
 }
 

@@ -21,14 +21,19 @@ var SongKarma map[string]int
 
 var graph *library.Graph
 
-func init() {
-	logfile, err := os.OpenFile(path.Join(config.Config.DataPath, "impression.log"),
+func Setup() {
+	logfile, err := os.OpenFile(path.Join(config.DataPath, "impression.log"),
 		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
 		0666)
 	if err != nil {
 		panic(err)
 	}
 	logger = log.New(logfile, "", 0)
+
+	err = Load()
+	if err != nil {
+		panic(err)
+	}
 
 }
 
@@ -47,9 +52,9 @@ func Load() error {
 	hashIdx := 0
 	impressionIdx := 1
 
-	f, err := os.Open(path.Join(config.Config.DataPath, "impression.log"))
+	f, err := os.Open(path.Join(config.DataPath, "impression.log"))
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer f.Close()
 

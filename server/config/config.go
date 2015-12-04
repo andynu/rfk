@@ -8,19 +8,24 @@ import (
 	"path/filepath"
 
 	"github.com/andynu/rfk/server/observer"
+	"path"
 )
 
 type ConfigType struct {
-	DataPath                   string
 	WeatherUndergroundKey      string
 	WeatherUndergroundLocation string
 }
 
 var Config ConfigType
+var DataPath string
 
 func init() {
 	Config = ConfigType{}
-	Config.DataPath = dataPath()
+	scriptDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(fmt.Errorf("No sciptDir! Crazy! %q", err))
+	}
+	DataPath = path.Join(scriptDir, "data")
 }
 
 func Load(configPath *string) {
@@ -32,7 +37,7 @@ func Load(configPath *string) {
 	if err != nil {
 		panic(err)
 	}
-	Config.DataPath = config["data_dir"]
+
 	Config.WeatherUndergroundKey = config["weather_underground_key"]
 	Config.WeatherUndergroundLocation = config["weather_underground_location"]
 

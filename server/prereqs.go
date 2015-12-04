@@ -2,29 +2,79 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
-	"syscall"
+	"log"
+	"os"
+	"path/filepath"
+	"path"
+	"io"
+	"bufio"
+	"strings"
+	"github.com/andynu/rfk/server/library"
 )
 
 func checkPrereqs() {
-	ensureExists("mpg123")
+	ensureBinaryExists("mpg123")
+
+	scriptDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+
+	configPath := path.Join(scriptDir,"config.json")
+	if !pathExists(configPath) {
+		fmt.Println(configPath)
+		configExamplePath := path.Join(scriptDir,"config.json.example")
+		cp(configExamplePath, configPath)
+		log.Printf("Missing config: created default at %q", configPath)
+	}
+
+	dataPath := path.Join(scriptDir, "data")
+	if !pathExists(dataPath) {
+		log.Printf("Missing data dir: creating at %q", dataPath)
+		os.Mkdir(dataPath, 0760)
+	}
+
+	songsPath := path.Join(scriptDir, "data","songs.txt")
+	songHashesPath := path.Join(scriptDir, "data","song_hashes.txt")
+	if !pathExists(songsPath) && !pathExists(songHashesPath) {
+		log.Printf("No song indexes detected!")
+		fmt.Printf("\nPlease provide folder with mp3s: ")
+		library.AddPaths([]string{gets()})
+	}
 }
 
-func ensureExists(executable string) {
-	cmd := exec.Command(executable)
-	if err := cmd.Run(); err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			waitStatus := exitError.Sys().(syscall.WaitStatus)
-			exitStatus := waitStatus.ExitStatus()
-			switch exitStatus {
-			case 1:
-				log.Printf("prereq: %q OK\n", executable)
-				return
-			default:
-				panic(fmt.Errorf("prereq: Unknown exit %q => %d - %q", executable, exitStatus, err))
-			}
-		}
-		panic(fmt.Errorf("prereq: Unknown error for %q => %q", executable, err))
+func pathExists(path string) bool {
+	_, err := os.Stat(path);
+	return (err == nil)
+}
+
+func ensureBinaryExists(executable string) {
+	_, err := exec.LookPath(executable)
+	if  err != nil {
+		panic(fmt.Errorf("prereq: %q [failed]: %q", executable, err))
 	}
+}
+
+func cp(src, dst string) error {
+	s, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer s.Close()
+
+	d, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+
+	if _, err := io.Copy(d, s); err != nil {
+		d.Close()
+		return err
+	}
+	return d.Close()
+}
+
+func gets() string {
+	reader := bufio.NewReader(os.Stdin)
+	text, _ := reader.ReadString('\n')
+	text = strings.TrimSuffix(text, "\n")
+	return text
 }

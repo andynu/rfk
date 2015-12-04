@@ -24,6 +24,7 @@ func main() {
 	startPaused := flag.Bool("paused", false, "start paused")
 	flag.Parse()
 
+	checkPrereqs()
 	config.Load(configPath)
 
 	switch *command {
@@ -32,12 +33,12 @@ func main() {
 
 	default:
 
-		checkPrereqs()
+
 		console.InputListener()
 		rpc.SetupRPC()
 
 		library.Load()
-		karma.Load()
+		karma.Setup()
 
 		if *startPaused {
 			player.TogglePlayPause()

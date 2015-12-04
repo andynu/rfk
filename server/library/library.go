@@ -36,13 +36,13 @@ func Load() {
 	songPathMap = make(map[string]*Song, 1000)
 
 	if Songs == nil {
-		songHashesPath = path.Join(config.Config.DataPath, "song_hashes.txt")
+		songHashesPath = path.Join(config.DataPath, "song_hashes.txt")
 		err := loadSongHashesMap(songHashesPath)
 		panicOnErr(err)
 	}
 
 	if Songs == nil {
-		songsPath = path.Join(config.Config.DataPath, "songs.txt")
+		songsPath = path.Join(config.DataPath, "songs.txt")
 		err := loadSongs(songsPath)
 		panicOnErr(err)
 	}
