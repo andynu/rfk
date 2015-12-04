@@ -27,11 +27,19 @@ func loadSongHashesMap(songHashesTxt string) error {
 		return err
 	}
 
+	//var nilSong Song
+
 	for _, record := range records {
-		song := Song{Path: record[pathIdx], Hash: record[hashIdx]}
-		Songs = append(Songs, &song)
-		songPathMap[song.Path] = &song
-		songHashMap[song.Hash] = append(songHashMap[song.Hash], &song)
+    song := *songPathMap[record[pathIdx]]
+
+    //if song == nilSong {
+    //  song = Song{Path: record[pathIdx], Hash: record[hashIdx]}
+    //  Songs = append(Songs, &song)
+    //  songPathMap[song.Path] = &song
+    //}
+
+    song.Hash = record[hashIdx]
+    songHashMap[song.Hash] = append(songHashMap[song.Hash], &song)
 	}
 	return nil
 }

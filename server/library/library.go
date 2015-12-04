@@ -36,18 +36,9 @@ func Load() {
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 	songsPath := path.Join(config.DataPath, "songs.txt")
 
-	if Songs == nil {
-		err := loadSongHashesMap(songHashesPath)
-		if err != nil {
-			log.Printf("library: No song_hashes. Falling back to songs.")
-		}
-	}
-
-	if Songs == nil {
-		err := loadSongs(songsPath)
-		panicOnErr(err)
-		go IdentifySongs(Songs, songHashesPath)
-	}
+  loadSongs(songsPath)
+  loadSongHashesMap(songHashesPath)
+  go IdentifySongs(Songs, songHashesPath)
 
 	observer.Notify("library.loaded", struct{}{})
 	log.Printf("Loaded %d songs", len(Songs))
