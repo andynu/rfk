@@ -11,29 +11,33 @@ func main() {
 	args := os.Args[1:]
 	fmt.Println(args)
 	switch args[0] {
-	case "server":
-		fmt.Println("Running server...")
-		execRun("rfk-server", args[1:])
 	case "skip", "reward", "play", "pause":
-		execRun("rfk-cli", args[0:0])
+		execRun("rfk-cli", args[0:]...)
 	default:
+		if isDashRun(args[0]) {
+			execRun("rfk-"+args[0], args[1:]...)
+		}
 		fmt.Printf("Unknown command %q\n", args)
 	}
 }
 
-func execRun(cmd string, args []string) {
+func isDashRun(cmd string) bool {
+	_, err := exec.LookPath("rfk-server")
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func execRun(cmd string, args ...string) {
 	binary, err := exec.LookPath("rfk-server")
 	panicErr(err)
 	fmt.Printf("running: %q\n", binary)
 
-  var argsWithBinary []string
-  argsWithBinary = append(argsWithBinary, binary)
-  for _, arg := range args {
-    argsWithBinary = append(argsWithBinary, arg)
-  }
+	binargs := append([]string{cmd}, args...)
 
-  env := os.Environ()
-	err = syscall.Exec(binary, argsWithBinary, env)
+	env := os.Environ()
+	err = syscall.Exec(cmd, binargs, env)
 	panicErr(err)
 }
 

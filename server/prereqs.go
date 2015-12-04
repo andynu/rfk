@@ -1,15 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"os/exec"
+	"io"
 	"log"
 	"os"
-	"path/filepath"
+	"os/exec"
 	"path"
-	"io"
-	"bufio"
+	"path/filepath"
 	"strings"
+
 	"github.com/andynu/rfk/server/library"
 )
 
@@ -18,10 +19,10 @@ func checkPrereqs() {
 
 	scriptDir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
 
-	configPath := path.Join(scriptDir,"config.json")
+	configPath := path.Join(scriptDir, "config.json")
 	if !pathExists(configPath) {
 		fmt.Println(configPath)
-		configExamplePath := path.Join(scriptDir,"config.json.example")
+		configExamplePath := path.Join(scriptDir, "config.json.example")
 		cp(configExamplePath, configPath)
 		log.Printf("Missing config: created default at %q", configPath)
 	}
@@ -32,23 +33,24 @@ func checkPrereqs() {
 		os.Mkdir(dataPath, 0760)
 	}
 
-	songsPath := path.Join(scriptDir, "data","songs.txt")
-	songHashesPath := path.Join(scriptDir, "data","song_hashes.txt")
+	songsPath := path.Join(scriptDir, "data", "songs.txt")
+	songHashesPath := path.Join(scriptDir, "data", "song_hashes.txt")
 	if !pathExists(songsPath) && !pathExists(songHashesPath) {
 		log.Printf("No song indexes detected!")
 		fmt.Printf("\nPlease provide folder with mp3s: ")
-		library.AddPaths([]string{gets()})
+		musicPath := gets()
+		library.AddPaths([]string{musicPath})
 	}
 }
 
 func pathExists(path string) bool {
-	_, err := os.Stat(path);
+	_, err := os.Stat(path)
 	return (err == nil)
 }
 
 func ensureBinaryExists(executable string) {
 	_, err := exec.LookPath(executable)
-	if  err != nil {
+	if err != nil {
 		panic(fmt.Errorf("prereq: %q [failed]: %q", executable, err))
 	}
 }

@@ -6,9 +6,10 @@ import (
 	"log"
 	"path"
 
+	"strings"
+
 	"github.com/andynu/rfk/server/config"
 	"github.com/andynu/rfk/server/observer"
-	"strings"
 )
 
 // The list of Songs
@@ -25,9 +26,6 @@ var graph *Graph
 // The root Nodes for the path graph
 var PathRoots []Node
 
-// song file paths, used by Load() and AddPaths()
-var songsPath, songHashesPath string
-
 // loads Songs from either song_hashes.txt or songs.txt (first to exist).
 // loads the path graph
 func Load() {
@@ -35,16 +33,20 @@ func Load() {
 	songHashMap = make(map[string][]*Song, 1000)
 	songPathMap = make(map[string]*Song, 1000)
 
+	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
+	songsPath := path.Join(config.DataPath, "songs.txt")
+
 	if Songs == nil {
-		songHashesPath = path.Join(config.DataPath, "song_hashes.txt")
 		err := loadSongHashesMap(songHashesPath)
-		panicOnErr(err)
+		if err != nil {
+			log.Printf("library: No song_hashes. Falling back to songs.")
+		}
 	}
 
 	if Songs == nil {
-		songsPath = path.Join(config.DataPath, "songs.txt")
 		err := loadSongs(songsPath)
 		panicOnErr(err)
+		go IdentifySongs(Songs, songHashesPath)
 	}
 
 	observer.Notify("library.loaded", struct{}{})

@@ -2,19 +2,27 @@ package library
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
+
+	"github.com/andynu/rfk/server/config"
 )
 
 // Adds mp3s to the library (songs.txt) from the specified paths.
 //
 // A 100% go version of `find <path> -name '*.mp3' > songs.txt`
 func AddPaths(paths []string) {
-	f, err := os.OpenFile(songsPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0660)
-	if err != nil {}
-	anicOnErr(fmt.Errorf("%q: %v", songsPath, err))
+
+	songsPath := path.Join(config.DataPath, "songs.txt")
+
+	f, err := os.OpenFile(songsPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0660)
+	if err != nil {
+		panicOnErr(fmt.Errorf("%q: %v", songsPath, err))
+	}
 	mp3Count := 0
 
 	for _, path := range paths {

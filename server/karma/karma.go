@@ -39,6 +39,10 @@ func Setup() {
 
 // Record a positive/negative impression of a Song.
 func Log(song library.Song, impression int) {
+	if song.Hash == "" {
+		log.Printf("Cannot take impression for %q, no song hash.\n", song.Path)
+		return
+	}
 	mu.Lock()
 	logger.Printf("%s\t%d", song.Hash, impression)
 	mu.Unlock()
