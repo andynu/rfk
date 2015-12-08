@@ -3,6 +3,7 @@ package karma
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -60,11 +61,13 @@ func Load() error {
 	impressionCount := 0
 
 	timestampIdx := 0
-	hashIdx := 0
-	tagIdx := 1
-	impressionIdx := 2
+	hashIdx := 1
+	tagIdx := 2
+	impressionIdx := 3
 
-	f, err := os.Open(path.Join(config.DataPath, "impression.log"))
+	impressionLogPath := path.Join(config.DataPath, "impression.log")
+	log.Printf("Reading impressions from: %q", impressionLogPath)
+	f, err := os.Open(impressionLogPath)
 	if err != nil {
 		return err
 	}
@@ -80,6 +83,9 @@ func Load() error {
 	}
 
 	for _, record := range records {
+		if len(record) != 4 {
+			return fmt.Errorf("Malformed impression.log, wrong number of columns %d expected 4", len(record))
+		}
 		_ = record[timestampIdx]
 		hash := record[hashIdx]
 		_ = record[tagIdx]
