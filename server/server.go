@@ -38,6 +38,7 @@ func main() {
 
 		library.Load()
 		karma.Setup()
+		env.StartEnvUpdater()
 
 		if *startPaused {
 			player.TogglePlayPause()
@@ -54,9 +55,6 @@ func main() {
 			log.Printf("Skipped %v", song)
 			karma.Log(song, -2)
 		})
-
-		env.Prime()
-		env.LogFull()
 
 		for {
 
