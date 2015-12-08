@@ -13,7 +13,21 @@ import (
 )
 
 // The list of Songs
-var Songs []*Song
+type SongList []*Song
+
+func (slice SongList) Len() int {
+	return len(slice)
+}
+
+func (slice SongList) Less(i, j int) bool {
+	return slice[i].Rank < slice[j].Rank
+}
+
+func (slice SongList) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
+}
+
+var Songs SongList
 
 // Map from path to Song
 var songPathMap map[string]*Song
@@ -36,9 +50,9 @@ func Load() {
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 	songsPath := path.Join(config.DataPath, "songs.txt")
 
-  loadSongs(songsPath)
-  loadSongHashesMap(songHashesPath)
-  go IdentifySongs(Songs, songHashesPath)
+	loadSongs(songsPath)
+	loadSongHashesMap(songHashesPath)
+	go IdentifySongs(Songs, songHashesPath)
 
 	observer.Notify("library.loaded", struct{}{})
 	log.Printf("Loaded %d songs", len(Songs))

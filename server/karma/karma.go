@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
 	"strconv"
 	"sync"
 
@@ -93,6 +94,9 @@ func Load() error {
 		}
 	}
 	//log.Printf("%v", SongKarma)
+
+	sort.Sort(library.Songs)
+
 	log.Printf("Loading karma: %d impressions loaded", impressionCount)
 	return nil
 }
