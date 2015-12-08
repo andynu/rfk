@@ -1,4 +1,7 @@
-all : rfk-server rfk-cli rfk-ident
+all : rfk rfk-server rfk-cli rfk-ident
+
+rfk :
+	go build
 
 rfk-server :
 	go build -o rfk-server ./server
@@ -10,7 +13,7 @@ rfk-ident :
 	go build -o rfk-ident ./ident
 
 clean :
-	rm ./rfk || echo already cleaned.
-	rm ./rfk-cli || echo already cleaned.
-	rm ./rfk-server || echo already cleaned.
-	rm ./rfk-ident || echo already cleaned.
+	rm ./rfk || true
+	rm ./rfk-cli || true
+	rm ./rfk-server || true
+	rm ./rfk-ident || true
