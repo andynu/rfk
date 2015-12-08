@@ -28,7 +28,7 @@ func Setup() {
 	if err != nil {
 		panic(err)
 	}
-	logger = log.New(logfile, "", 0)
+	logger = log.New(logfile, "", log.Ldate|log.Ltime|log.Lmicroseconds)
 
 	err = Load()
 	if err != nil {
@@ -39,12 +39,16 @@ func Setup() {
 
 // Record a positive/negative impression of a Song.
 func Log(song library.Song, impression int) {
+	LogTag(song, "karma", impression)
+}
+
+func LogTag(song library.Song, tag string, impression int) {
 	if song.Hash == "" {
 		log.Printf("Cannot take impression for %q, no song hash.\n", song.Path)
 		return
 	}
 	mu.Lock()
-	logger.Printf("%s\t%d", song.Hash, impression)
+	logger.Printf("\t%s\t%s\t%d", song.Hash, "karma", impression)
 	mu.Unlock()
 }
 
@@ -53,8 +57,11 @@ func Load() error {
 	SongKarma = make(map[string]int)
 
 	impressionCount := 0
+
+	timestampIdx := 0
 	hashIdx := 0
-	impressionIdx := 1
+	tagIdx := 1
+	impressionIdx := 2
 
 	f, err := os.Open(path.Join(config.DataPath, "impression.log"))
 	if err != nil {
@@ -72,7 +79,9 @@ func Load() error {
 	}
 
 	for _, record := range records {
+		_ = record[timestampIdx]
 		hash := record[hashIdx]
+		_ = record[tagIdx]
 		impression, _ := strconv.Atoi(record[impressionIdx])
 		SongKarma[hash] += impression
 
