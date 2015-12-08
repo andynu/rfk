@@ -94,7 +94,7 @@ func (w *WeatherSensor) fetch() ([]byte, error) {
 	key := config.Config.WeatherUndergroundKey
 	location := config.Config.WeatherUndergroundLocation
 	hourlyWeatherUrl := "http://api.wunderground.com/api/" + key + "/hourly/q/" + location + ".json"
-	log.Printf("DEBUG: url=%v", hourlyWeatherUrl)
+	log.Printf("env: sensor: weather: fetch=%v", hourlyWeatherUrl)
 
 	res, err := http.Get(hourlyWeatherUrl)
 	if err != nil {
@@ -202,7 +202,10 @@ func (r *WUHourlyResponse) stale(targetTime time.Time) bool {
 		}
 	}
 	lastHour := targetTime.Truncate(time.Hour)
-	return (max.After(lastHour))
+	isStale := (max.After(lastHour))
+	log.Printf("env: sensor: weather: cache stale=%t lastHour=%v", isStale, lastHour)
+
+	return isStale
 }
 
 func epochToTime(epoch string) time.Time {

@@ -17,6 +17,7 @@ import (
 const playerBin string = "mpg123"
 
 var CurrentSong library.Song
+var LastSong library.Song
 
 var playerCmd *exec.Cmd
 
@@ -24,6 +25,7 @@ var playing_mu sync.Mutex
 var playing bool = true
 
 func Play(song library.Song) error {
+	LastSong = CurrentSong
 	CurrentSong = song
 	log.Printf("player: playing %q (%f)", song.Path, song.Rank)
 	logMetadata(song.Path)

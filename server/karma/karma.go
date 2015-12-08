@@ -54,6 +54,12 @@ func logImpression(song library.Song, tag string, impression int) {
 	mu.Unlock()
 }
 
+func LogTag(song library.Song, tag string) {
+	mu.Lock()
+	logger.Printf("\t%s\t%s\t%s", "tag", song.Hash, tag)
+	mu.Unlock()
+}
+
 func LogEnv(sensor string, value string) {
 	mu.Lock()
 	logger.Printf("\t%s\t%s\t%s", "env", sensor, value)

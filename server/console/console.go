@@ -42,6 +42,14 @@ func InputListener() {
 				term := strings.Join(args[1:], " ")
 				log.Printf("cmd: request - %q", term)
 				request(term)
+			case "taglast":
+				tag := strings.Join(args[1:], " ")
+				log.Printf("cmd: tag last song - %q", tag)
+				tagLast(tag)
+			case "tag":
+				tag := strings.Join(args[1:], " ")
+				log.Printf("cmd: tag current song - %q", tag)
+				tagCurrent(tag)
 			case "clear":
 				log.Printf("cmd: clear request")
 				clearRequests()
@@ -76,4 +84,12 @@ func request(term string) {
 func clearRequests() {
 	dj.ClearRequests()
 	fmt.Printf("Requests Cleared\n")
+}
+
+func tagCurrent(tag string) {
+	karma.LogTag(player.CurrentSong, tag)
+}
+
+func tagLast(tag string) {
+	karma.LogTag(player.LastSong, tag)
 }
