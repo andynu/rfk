@@ -6,8 +6,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/andynu/rfk/server/api/console"
+	"github.com/andynu/rfk/server/api/rest"
+	"github.com/andynu/rfk/server/api/rpc"
 	"github.com/andynu/rfk/server/config"
-	"github.com/andynu/rfk/server/console"
 	"github.com/andynu/rfk/server/dj"
 	"github.com/andynu/rfk/server/env"
 	_ "github.com/andynu/rfk/server/env/sensors/weather"
@@ -15,7 +17,6 @@ import (
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
 	"github.com/andynu/rfk/server/player"
-	"github.com/andynu/rfk/server/rpc"
 )
 
 func main() {
@@ -33,8 +34,9 @@ func main() {
 
 	default:
 
+		rpc.RPCListener()
 		console.InputListener()
-		rpc.SetupRPC()
+		rest.RESTListener()
 
 		library.Load()
 		karma.Setup()

@@ -8,10 +8,11 @@ package main
 
 import (
 	"fmt"
-	rfkrpc "github.com/andynu/rfk/server/rpc"
 	"log"
 	"net/rpc"
 	"os"
+
+	rfkrpc "github.com/andynu/rfk/server/api/rpc"
 )
 
 func main() {
@@ -19,8 +20,8 @@ func main() {
 		switch cmd {
 		case "skip":
 			simpleCall("Player.Skip")
-		case "stop":
-			simpleCall("Player.Stop")
+		case "next":
+			simpleCall("Player.SkipNoPunish")
 		case "reward":
 			simpleCall("Player.Reward")
 		default:

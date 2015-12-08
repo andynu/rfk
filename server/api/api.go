@@ -38,7 +38,9 @@ func ClearRequests() {
 }
 
 func TagCurrentSong(tag string) {
+	karma.LogTag(player.CurrentSong, tag)
 }
 
 func TagLastSong(tag string) {
+	karma.LogTag(player.LastSong, tag)
 }
