@@ -54,6 +54,11 @@ func (w *WeatherSensor) Sample() []env.Sample {
 		SensorName: "Weather:Temp",
 		Value:      forecast.Temp.English})
 
+	samples = append(samples, env.Sample{
+		Timestamp:  now,
+		SensorName: "Weather:TempFeel",
+		Value:      forecast.Feelslike.English})
+
 	return samples
 }
 
