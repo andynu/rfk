@@ -5,9 +5,34 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/andynu/rfk/server/karma"
 	"github.com/andynu/rfk/server/library"
 )
+
+func noHashFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
+	return func() (library.Song, error) {
+		song, err := djFunc()
+		if err != nil {
+			return library.Song{}, err
+		}
+		if song.Hash == "" {
+			return library.Song{}, fmt.Errorf("NoHashSong")
+		}
+		return song, nil
+	}
+}
+
+func noNegFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
+	return func() (library.Song, error) {
+		song, err := djFunc()
+		if err != nil {
+			return library.Song{}, err
+		}
+		if song.Rank < 0 {
+			return library.Song{}, fmt.Errorf("NegSong")
+		}
+		return song, nil
+	}
+}
 
 func randomSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
@@ -16,39 +41,7 @@ func randomSong() (library.Song, error) {
 	return song, nil
 }
 
-// karma is song specific
-func randomNonNegativeKarmaSong() (library.Song, error) {
-	rand.Seed(time.Now().UnixNano())
-	idx := rand.Intn(len(library.Songs) - 1)
-	song := *library.Songs[idx]
-	if karma.SongKarma[song.Hash] < 0 {
-		return library.Song{}, fmt.Errorf("NegSong")
-	}
-	return song, nil
-}
-
-// rank incorporates the karma of nearbye songs
-func randomNonNegativeRankSong() (library.Song, error) {
-	rand.Seed(time.Now().UnixNano())
-	idx := rand.Intn(len(library.Songs) - 1)
-	song := *library.Songs[idx]
-	if song.Rank < 0 {
-		return library.Song{}, fmt.Errorf("NegSong")
-	}
-	return song, nil
-}
-
-func randomNormalNonNegRankSong() (library.Song, error) {
-	rand.Seed(time.Now().UnixNano())
-	idx := normalRand(len(library.Songs) - 1)
-	song := *library.Songs[idx]
-	if song.Rank < 0 {
-		return library.Song{}, fmt.Errorf("NegSong")
-	}
-	return song, nil
-}
-
-func randomNormalRankSong() (library.Song, error) {
+func randomNormalSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
 	idx := normalRand(len(library.Songs) - 1)
 	song := *library.Songs[idx]
