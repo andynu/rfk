@@ -25,7 +25,7 @@ var playing bool = true
 
 func Play(song library.Song) error {
 	CurrentSong = song
-	log.Printf("player: playing %q", song.Path)
+	log.Printf("player: playing %q (%f)", song.Path, song.Rank)
 	logMetadata(song.Path)
 
 	playerCmd = exec.Command(playerBin, song.Path)

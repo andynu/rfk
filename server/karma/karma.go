@@ -41,16 +41,22 @@ func Setup() {
 
 // Record a positive/negative impression of a Song.
 func Log(song library.Song, impression int) {
-	LogTag(song, "karma", impression)
+	logImpression(song, "karma", impression)
 }
 
-func LogTag(song library.Song, tag string, impression int) {
+func logImpression(song library.Song, tag string, impression int) {
 	if song.Hash == "" {
 		log.Printf("Cannot take impression for %q, no song hash.\n", song.Path)
 		return
 	}
 	mu.Lock()
-	logger.Printf("\t%s\t%s\t%d", song.Hash, "karma", impression)
+	logger.Printf("\t%s\t%s\t%d", "karma", song.Hash, impression)
+	mu.Unlock()
+}
+
+func LogEnv(sensor string, value string) {
+	mu.Lock()
+	logger.Printf("\t%s\t%s\t%s", "env", sensor, value)
 	mu.Unlock()
 }
 
@@ -61,9 +67,15 @@ func Load() error {
 	impressionCount := 0
 
 	timestampIdx := 0
-	hashIdx := 1
-	tagIdx := 2
+	logTypeIdx := 1
+
+	// logType = karma
+	hashIdx := 2
 	impressionIdx := 3
+
+	// logType = env
+	//tagIdx := 2
+	//valIdx := 3
 
 	impressionLogPath := path.Join(config.DataPath, "impression.log")
 	log.Printf("Reading impressions from: %q", impressionLogPath)
@@ -87,16 +99,27 @@ func Load() error {
 			return fmt.Errorf("Malformed impression.log, wrong number of columns %d expected 4", len(record))
 		}
 		_ = record[timestampIdx]
-		hash := record[hashIdx]
-		_ = record[tagIdx]
-		impression, _ := strconv.Atoi(record[impressionIdx])
-		SongKarma[hash] += impression
+		logType := record[logTypeIdx]
+		switch logType {
+		case "karma":
+			hash := record[hashIdx]
+			impression, _ := strconv.Atoi(record[impressionIdx])
+			SongKarma[hash] += impression
 
-		song, err := library.ByHash(hash)
-		if err == nil {
-			//log.Printf("spread it %v %v", hash, impression)
+			song, err := library.ByHash(hash)
+
+			if err != nil {
+				continue
+			}
+
 			impressionCount++
+			//historicalEnv.impress(song, impression)
 			go song.PathGraphImpress(impression)
+
+		case "env":
+			//sensor := record[sensorIdx]
+			//val := record[valIdx]
+			//historicalEnv.update(sensor, val)
 		}
 	}
 	//log.Printf("%v", SongKarma)

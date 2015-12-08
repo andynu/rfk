@@ -2,9 +2,10 @@
 package env
 
 import (
-	"log"
 	"sync"
 	"time"
+
+	"github.com/andynu/rfk/server/karma"
 )
 
 var sensors_mu sync.Mutex
@@ -37,6 +38,6 @@ func Prime() {
 
 func LogFull() {
 	for _, sample := range samples {
-		log.Printf("%v\t%q\t%q", sample.Timestamp, sample.SensorName, sample.Value)
+		karma.LogEnv(sample.SensorName, sample.Value)
 	}
 }

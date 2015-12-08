@@ -33,7 +33,6 @@ func main() {
 
 	default:
 
-
 		console.InputListener()
 		rpc.SetupRPC()
 
@@ -52,7 +51,7 @@ func main() {
 
 		observer.Observe("player.skip", func(msg interface{}) {
 			song := msg.(library.Song)
-			log.Printf("Played %v", song)
+			log.Printf("Skipped %v", song)
 			karma.Log(song, -2)
 		})
 
