@@ -22,8 +22,13 @@ import (
 func main() {
 	command := flag.String("e", "", "command")
 	configPath := flag.String("c", "", "config path")
+	webPlayerOnly := flag.Bool("webplayer", false, "webplayer; no mpg123 output")
 	startPaused := flag.Bool("paused", false, "start paused")
 	flag.Parse()
+
+	if *webPlayerOnly {
+		player.Silence()
+	}
 
 	checkPrereqs()
 	config.Load(configPath)

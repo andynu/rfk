@@ -24,14 +24,23 @@ var playerCmd *exec.Cmd
 var playing_mu sync.Mutex
 var playing bool = true
 
+var sleepPlayer bool = false
+
+func Silence() {
+	sleepPlayer = true
+}
+
 func Play(song library.Song) error {
 	LastSong = CurrentSong
 	CurrentSong = song
 	log.Printf("player: playing %q (%f)", song.Path, song.Rank)
 	logMetadata(song.Path)
 
-	playerCmd = exec.Command(playerBin, song.Path)
-	//playerCmd = exec.Command("sleep", "5")
+	if sleepPlayer {
+		playerCmd = exec.Command("sleep", "5")
+	} else {
+		playerCmd = exec.Command(playerBin, song.Path)
+	}
 	err := playerCmd.Run()
 	if err != nil {
 		return fmt.Errorf("player: %v", err)
