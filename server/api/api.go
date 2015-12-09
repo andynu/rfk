@@ -7,6 +7,24 @@ import (
 	"github.com/andynu/rfk/server/player"
 )
 
+type PlayerStatusResult struct {
+	CurrentSong     library.Song
+	CurrentSongMeta library.SongMeta
+	LastSong        library.Song
+	LastSongMeta    library.SongMeta
+	PlayPauseState  string
+	RequestCount    int
+}
+
+func PlayerStatus() PlayerStatusResult {
+	var result PlayerStatusResult
+	result.CurrentSong = player.CurrentSong
+	result.LastSong = player.LastSong
+	result.PlayPauseState = player.PlayPauseState()
+	result.RequestCount = dj.RequestCount()
+	return result
+}
+
 func PlayPause() {
 	player.TogglePlayPause()
 }

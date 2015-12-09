@@ -30,6 +30,15 @@ func Silence() {
 	sleepPlayer = true
 }
 
+func PlayPauseState() string {
+	playing_mu.Lock()
+	defer playing_mu.Unlock()
+	if playing {
+		return "playing"
+	}
+	return "paused"
+}
+
 func Play(song library.Song) error {
 	LastSong = CurrentSong
 	CurrentSong = song

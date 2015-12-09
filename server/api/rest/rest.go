@@ -17,8 +17,7 @@ func RESTListener() {
 	go func() {
 
 		http.HandleFunc("/", rootHandler)
-		http.HandleFunc("/playing", currentSongHandler)
-		http.HandleFunc("/last_song", lastSongHandler)
+		http.HandleFunc("/status", playerStatusHandler)
 		http.HandleFunc("/next", nextHandler)
 		http.HandleFunc("/skip", skipHandler)
 		http.HandleFunc("/playpause", playPauseHandler)
@@ -56,14 +55,9 @@ func rewardHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ok")
 }
 
-func currentSongHandler(w http.ResponseWriter, r *http.Request) {
+func playerStatusHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/javascript")
-	fmt.Fprintf(w, toJSON(player.CurrentSong))
-}
-
-func lastSongHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-type", "application/javascript")
-	fmt.Fprintf(w, toJSON(player.LastSong))
+	fmt.Fprintf(w, toJSON(api.PlayerStatus()))
 }
 
 func streamHandler(w http.ResponseWriter, r *http.Request) {

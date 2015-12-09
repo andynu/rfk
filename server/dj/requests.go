@@ -16,7 +16,6 @@ type requestList struct {
 
 var requests requestList = requestList{}
 
-
 func (list *requestList) popSong() (library.Song, error) {
 	if list.Len() > 0 {
 		song, ok := requests.pop().Value.(library.Song)
@@ -39,7 +38,6 @@ func (list *requestList) addAll(songs []*library.Song) {
 	}
 }
 
-
 func PopRequest() (library.Song, error) {
 	requests.Lock()
 	defer requests.Unlock()
@@ -56,6 +54,13 @@ func Request(songs []*library.Song) {
 
 func ClearRequests() {
 	requests = requestList{}
+}
+
+func RequestCount() int {
+	requests.Lock()
+	defer requests.Unlock()
+
+	return requests.Len()
 }
 
 // see dj.NextSong()

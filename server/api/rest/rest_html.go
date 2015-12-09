@@ -12,10 +12,12 @@ var indexHTML string = `
 
 $(function(){
 	updatePlaying = function(){
-		$.getJSON('/playing', function (data){
-			$('#playing_path').html(data['Path']);
-			$('#playing_hash').html(data['Hash']);
-			$('#playing_rank').html(data['Rank']);
+		$.getJSON('/status', function (data){
+			$('#request_count').html(data['RequestCount']);
+			$('#playpause_state').html(data['PlayPauseState']);
+			$('#playing_path').html(data['CurrentSong']['Path']);
+			$('#playing_hash').html(data['CurrentSong']['Hash']);
+			$('#playing_rank').html(data['CurrentSong']['Rank']);
 		});
 	}
 	updatePlaying();
@@ -31,6 +33,8 @@ $(function(){
 </head><body>
 <h1>RFK!</h1>
 
+<div id='playpause_state'></div>
+
 <div id='playing'>
 	<div id='playing_path'></div>
 	<div id='playing_hash'></div>
@@ -44,6 +48,10 @@ $(function(){
 <button id='playpause'>play/pause</button>
 |
 <button id='reward'>reward (+)</button>
+</div>
+
+<div id='requests'>
+Requests: <span id='request_count'></span>
 </div>
 
 </body></html>

@@ -14,6 +14,13 @@ type Song struct {
 	sync.Mutex
 }
 
+type SongMeta struct {
+	Artist string
+	Album  string
+	Title  string
+	genre  string
+}
+
 func (s *Song) String() string {
 	return fmt.Sprintf("[Song %s %s]", s.Hash, s.Path)
 }
