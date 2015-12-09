@@ -24,6 +24,7 @@ $(function(){
 	$('#skip').on('click', function(){ $.post('/skip'); updatePlaying(); });
 	$('#next').on('click', function(){ $.post('/next'); updatePlaying(); });
 	$('#reward').on('click', function(){ $.post('/reward'); updatePlaying(); });
+	$('#playpause').on('click', function(){ $.post('/playpause'); updatePlaying(); });
 });
 
 </script>
@@ -39,6 +40,9 @@ $(function(){
 <div id='actions'>
 <button id='skip'>skip (-)</button>
 <button id='next'>next</button>
+|
+<button id='playpause'>play/pause</button>
+|
 <button id='reward'>reward (+)</button>
 </div>
 

@@ -15,10 +15,10 @@ func RESTListener() {
 
 		http.HandleFunc("/", rootHandler)
 		http.HandleFunc("/playing", currentSongHandler)
+		http.HandleFunc("/last_song", lastSongHandler)
 		http.HandleFunc("/next", nextHandler)
 		http.HandleFunc("/skip", skipHandler)
-		http.HandleFunc("/play", playPauseHandler)
-		http.HandleFunc("/pause", playPauseHandler)
+		http.HandleFunc("/playpause", playPauseHandler)
 
 		err := http.ListenAndServe(":7778", nil)
 		if err != nil {
@@ -53,6 +53,10 @@ func rewardHandler(w http.ResponseWriter, r *http.Request) {
 
 func currentSongHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, toJSON(player.CurrentSong))
+}
+
+func lastSongHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, toJSON(player.LastSong))
 }
 
 func toJSON(obj interface{}) string {
