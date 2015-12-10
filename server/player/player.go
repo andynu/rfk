@@ -16,8 +16,8 @@ import (
 
 const playerBin string = "mpg123"
 
-var CurrentSong library.Song
-var LastSong library.Song
+var CurrentSong *library.Song
+var LastSong *library.Song
 
 var playerCmd *exec.Cmd
 
@@ -41,7 +41,7 @@ func PlayPauseState() string {
 
 func Play(song library.Song) error {
 	LastSong = CurrentSong
-	CurrentSong = song
+	CurrentSong = &song
 	log.Printf("player: playing %q (%f)", song.Path, song.Rank)
 	logMetadata(song.Path)
 
@@ -54,7 +54,7 @@ func Play(song library.Song) error {
 	if err != nil {
 		return fmt.Errorf("player: %v", err)
 	}
-	observer.Notify("player.played", song)
+	observer.Notify("player.played", &song)
 	return nil
 }
 

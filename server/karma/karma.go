@@ -40,11 +40,12 @@ func Setup() {
 }
 
 // Record a positive/negative impression of a Song.
-func Log(song library.Song, impression int) {
+func Log(song *library.Song, impression int) {
+	song.Rank += float64(impression)
 	logImpression(song, "karma", impression)
 }
 
-func logImpression(song library.Song, tag string, impression int) {
+func logImpression(song *library.Song, tag string, impression int) {
 	if song.Hash == "" {
 		log.Printf("Cannot take impression for %q, no song hash.\n", song.Path)
 		return
@@ -54,7 +55,7 @@ func logImpression(song library.Song, tag string, impression int) {
 	mu.Unlock()
 }
 
-func LogTag(song library.Song, tag string) {
+func LogTag(song *library.Song, tag string) {
 	mu.Lock()
 	logger.Printf("\t%s\t%s\t%s", "tag", song.Hash, tag)
 	mu.Unlock()

@@ -52,13 +52,13 @@ func main() {
 		}
 
 		observer.Observe("player.played", func(msg interface{}) {
-			song := msg.(library.Song)
+			song := msg.(*library.Song)
 			log.Printf("Played %v", song)
 			karma.Log(song, 1)
 		})
 
 		observer.Observe("player.skip", func(msg interface{}) {
-			song := msg.(library.Song)
+			song := msg.(*library.Song)
 			log.Printf("Skipped %v", song)
 			karma.Log(song, -2)
 		})
