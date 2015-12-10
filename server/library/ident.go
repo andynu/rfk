@@ -99,8 +99,24 @@ func audioFileChecksum(path string) {
 	out <- fmt.Sprintf("%s\t%q", checksum, path)
 }
 
-func check(err error) {
+// if something goes wrong, you get a blank one.
+func metaData(path string) SongMeta {
+	var meta SongMeta
+
+	f, err := os.Open(path)
+	defer f.Close()
 	if err != nil {
-		panic(err)
+		return meta
 	}
+
+	m, err := tag.ReadFrom(f)
+	if err != nil {
+		return meta
+	}
+
+	meta.Title = m.Title()
+	meta.Album = m.Album()
+	meta.Artist = m.Artist()
+
+	return meta
 }

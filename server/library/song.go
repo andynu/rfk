@@ -24,3 +24,11 @@ type SongMeta struct {
 func (s *Song) String() string {
 	return fmt.Sprintf("[Song %s %s]", s.Hash, s.Path)
 }
+
+func (s *Song) Meta() SongMeta {
+	var meta SongMeta
+	if s.Path != "" {
+		meta = metaData(s.Path)
+	}
+	return meta
+}

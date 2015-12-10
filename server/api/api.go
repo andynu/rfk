@@ -19,7 +19,9 @@ type PlayerStatusResult struct {
 func PlayerStatus() PlayerStatusResult {
 	var result PlayerStatusResult
 	result.CurrentSong = player.CurrentSong
+	result.CurrentSongMeta = player.CurrentSong.Meta()
 	result.LastSong = player.LastSong
+	result.LastSongMeta = player.LastSong.Meta()
 	result.PlayPauseState = player.PlayPauseState()
 	result.RequestCount = dj.RequestCount()
 	return result
