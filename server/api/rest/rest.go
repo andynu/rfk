@@ -20,6 +20,7 @@ func RESTListener() {
 		http.HandleFunc("/status", playerStatusHandler)
 		http.HandleFunc("/next", nextHandler)
 		http.HandleFunc("/skip", skipHandler)
+		http.HandleFunc("/reward", rewardHandler)
 		http.HandleFunc("/playpause", playPauseHandler)
 
 		http.HandleFunc("/stream", streamHandler)
