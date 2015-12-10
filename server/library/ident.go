@@ -37,54 +37,65 @@ import (
 	"log"
 	"os"
 	"path"
+	"sync"
 
 	"github.com/andynu/rfk/server/config"
 	"github.com/dhowden/tag"
 )
 
-const concurrency = 10
-
-var sem = make(chan bool, concurrency)
-var out = make(chan string)
-
 func IdentifySongs(songs []*Song, outFile string) {
 
 	log.Printf("Identifying songs...")
 
-	count := 0
+	// How many identification routines can run concurrently
+	const concurrency = 10
+	var sem = make(chan bool, concurrency)
+
+	// Result channel
+	var out = make(chan string)
+	var wg sync.WaitGroup
+
+	i := 0
 	if len(songs) != 0 {
 		// from Params
-		count = len(songs)
 		for _, song := range songs {
-			if song.Hash != "" {
-				count--
-				continue
+			if song.Hash == "" {
+				i++
+				wg.Add(1)
+				go audioFileChecksum(song, out, sem, &wg)
 			}
-			go audioFileChecksum(song.Path)
 		}
 	}
+	log.Printf("spun up %d go routines", i)
 
-	total := count
+	// Close the output channel when all the audioFileCheksums complete.
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
 
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 	f, err := os.OpenFile(songHashesPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0660)
 	if err != nil {
 		panic(fmt.Errorf("%q: %v", songHashesPath, err))
 	}
-	for count != 0 {
-		f.WriteString(<-out + "\n")
-		count--
 
-		if count%100 == 0 {
-			log.Printf("Identified %d songs.\n", total-count)
+	i = 0
+	for str := range out {
+		f.WriteString(str + "\n")
+		i++
+		if i%100 == 0 {
+			log.Printf("Attempted identification of %d songs\n", i)
 		}
-
 	}
+	log.Printf("Identifying songs...done\n")
 }
 
-func audioFileChecksum(path string) {
+func audioFileChecksum(song *Song, out chan<- string, sem chan bool, wg *sync.WaitGroup) {
 	sem <- true
 	defer func() { <-sem }()
+	defer func() { wg.Done() }()
+	path := song.Path
 	f, err := os.Open(path)
 	defer f.Close()
 	if err != nil {
@@ -96,6 +107,7 @@ func audioFileChecksum(path string) {
 		out <- fmt.Sprintf("%q\t%q", err, path)
 		return
 	}
+	song.Hash = checksum
 	out <- fmt.Sprintf("%s\t%q", checksum, path)
 }
 

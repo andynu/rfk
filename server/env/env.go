@@ -82,7 +82,7 @@ func updateEnv() {
 func StartEnvUpdater() {
 	updateEnv()
 	go func() {
-		tick := time.NewTicker(time.Minute).C
+		tick := time.NewTicker(time.Hour).C
 		for {
 			<-tick
 			log.Printf("env: start update")
