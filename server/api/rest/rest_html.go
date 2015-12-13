@@ -2,6 +2,7 @@ package rest
 
 var indexHTML string = `
 <html><head>
+<meta name="viewport" content="width=device-width, initial-scale=4">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css" rel="stylesheet"></link>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet"></link>
 <style type='text/css'>
@@ -25,14 +26,14 @@ var indexHTML string = `
 	<div class='pull-right'>
 		<div class='btn-toolbar'>
 			<div class='btn-group'>
-				<button id='reward' class='btn btn-success'><i class='fa fa-thumbs-o-up'/></i></button>
-				<button id='skip' class='btn btn-danger'><i class='fa fa-thumbs-o-down'/></i></button>
+				<button id='reward' class='btn btn-lg btn-success'><i class='fa fa-thumbs-o-up'/></i></button>
+				<button id='skip' class='btn btn-lg btn-danger'><i class='fa fa-thumbs-o-down'/></i></button>
 			</div>
 		</div>
 		<div class='btn-toolbar'>
 			<div class='btn-group'>
-				<button id='playpause' class='btn btn-default'><i class='fa fa-play'></i></button>
-				<button id='next' class='btn btn-default'><i class='fa fa-forward'/></i></button>
+				<button id='playpause' class='btn btn-lg btn-default'><i class='fa fa-play'></i></button>
+				<button id='next' class='btn btn-lg btn-default'><i class='fa fa-forward'/></i></button>
 			</div>
 		</div>
 	</div>
