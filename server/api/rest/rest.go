@@ -37,26 +37,31 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func nextHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	api.SkipNoPunish()
 	fmt.Fprintf(w, "ok")
 }
 
 func playPauseHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	api.PlayPause()
 	fmt.Fprintf(w, "ok")
 }
 
 func skipHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	api.Skip()
 	fmt.Fprintf(w, "ok")
 }
 
 func rewardHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	api.Reward()
 	fmt.Fprintf(w, "ok")
 }
 
 func playerStatusHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-type", "application/javascript")
 	fmt.Fprintf(w, toJSON(api.PlayerStatus()))
 }
