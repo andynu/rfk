@@ -63,6 +63,18 @@ func RequestCount() int {
 	return requests.Len()
 }
 
+func Requests() []*library.Song {
+	var retSongs []*library.Song
+	requests.Lock()
+	defer requests.Unlock()
+
+	for e := requests.Front(); e != nil; e = e.Next() {
+		song, _ := e.Value.(library.Song)
+		retSongs = append(retSongs, &song)
+	}
+	return retSongs
+}
+
 // see dj.NextSong()
 func requestedSong() (library.Song, error) {
 	return PopRequest()

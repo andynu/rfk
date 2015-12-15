@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/andynu/rfk/server/api"
+	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/player"
 )
 
@@ -22,6 +24,12 @@ func RESTListener() {
 		http.HandleFunc("/skip", skipHandler)
 		http.HandleFunc("/reward", rewardHandler)
 		http.HandleFunc("/playpause", playPauseHandler)
+
+		http.HandleFunc("/search", searchHandler)
+		http.HandleFunc("/searchRequest", searchRequestHandler)
+		http.HandleFunc("/request", requestHandler)
+		http.HandleFunc("/requests", requestsHandler)
+		http.HandleFunc("/clearRequests", clearRequestsHandler)
 
 		http.HandleFunc("/stream", streamHandler)
 
@@ -66,6 +74,57 @@ func playerStatusHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, toJSON(api.PlayerStatus()))
 }
 
+func requestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+	//hashes := r.URL.Query().Get("hashes")
+	//api.Request(hashes)
+	fmt.Fprintf(w, toJSON(api.Requests()))
+}
+
+func requestsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+	switch r.Method {
+	case "GET":
+		fmt.Fprintf(w, toJSON(api.Requests()))
+	case "DELETE":
+		api.ClearRequests()
+		fmt.Fprintf(w, toJSON(api.Requests()))
+	}
+}
+
+func clearRequestsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+	api.ClearRequests()
+	fmt.Fprintf(w, toJSON(api.Requests()))
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+
+	term := r.URL.Query().Get("term")
+	offsetParam := r.URL.Query().Get("offset")
+	limitParam := r.URL.Query().Get("limit")
+
+	pagedSongs := pagedSongs(api.Search(term), limitParam, offsetParam)
+
+	fmt.Fprintf(w, toJSON(pagedSongs))
+}
+
+func searchRequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+
+	term := r.URL.Query().Get("term")
+
+	api.SearchRequest(term)
+
+	fmt.Fprintf(w, toJSON(true))
+}
+
 func streamHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 
@@ -107,4 +166,21 @@ func toJSON(obj interface{}) string {
 		return ""
 	}
 	return string(data)
+}
+
+func pagedSongs(objects []*library.Song, limitStr string, offsetStr string) []*library.Song {
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		limit = 1000
+	}
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil {
+		offset = 0
+	}
+	startIdx := offset * limit
+	endIdx := (offset + 1) * limit
+	if endIdx > len(objects) {
+		endIdx = len(objects)
+	}
+	return objects[startIdx:endIdx]
 }

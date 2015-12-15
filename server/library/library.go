@@ -68,6 +68,18 @@ func ByHash(hash string) (*Song, error) {
 	return &Song{}, fmt.Errorf("UnknownHash")
 }
 
+// lookup Song by Song.Hash string
+func ByHashes(hashes []string) ([]*Song, error) {
+	var songs []*Song
+	for _, hash := range hashes {
+		hashSongs := songHashMap[hash]
+		if hashSongs != nil {
+			songs = append(songs, hashSongs[0])
+		}
+	}
+	return songs, nil
+}
+
 // find songs by path substring
 func Search(term string) []*Song {
 	var songs []*Song

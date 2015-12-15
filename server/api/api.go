@@ -8,9 +8,9 @@ import (
 )
 
 type PlayerStatusResult struct {
-	CurrentSong     library.Song
+	CurrentSong     *library.Song
 	CurrentSongMeta library.SongMeta
-	LastSong        library.Song
+	LastSong        *library.Song
 	LastSongMeta    library.SongMeta
 	PlayPauseState  string
 	RequestCount    int
@@ -18,12 +18,12 @@ type PlayerStatusResult struct {
 
 func PlayerStatus() PlayerStatusResult {
 	var result PlayerStatusResult
-	if player.CurrentSong != nil {
-		result.CurrentSong = *player.CurrentSong
+	result.CurrentSong = player.CurrentSong
+	if result.CurrentSong != nil {
 		result.CurrentSongMeta = (*player.CurrentSong).Meta()
 	}
-	if player.LastSong != nil {
-		result.LastSong = *player.LastSong
+	result.LastSong = player.LastSong
+	if result.LastSong != nil {
 		result.LastSongMeta = (*player.LastSong).Meta()
 	}
 	result.PlayPauseState = player.PlayPauseState()
@@ -55,6 +55,16 @@ func SearchRequest(term string) []*library.Song {
 	songs := library.Search(term)
 	dj.Request(songs)
 	return songs
+}
+
+func Request(hashes []string) []*library.Song {
+	songs, _ := library.ByHashes(hashes)
+	dj.Request(songs)
+	return songs
+}
+
+func Requests() []*library.Song {
+	return dj.Requests()
 }
 
 func ClearRequests() {
