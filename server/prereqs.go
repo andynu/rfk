@@ -39,6 +39,10 @@ func checkPrereqs() {
 		log.Printf("No song indexes detected!")
 		fmt.Printf("\nPlease provide folder with mp3s: ")
 		musicPath := gets()
+		for !pathExists(musicPath) {
+			fmt.Printf("\nInvalid path. Please try again: ")
+			musicPath = gets()
+		}
 		library.AddPaths([]string{musicPath})
 	}
 }
