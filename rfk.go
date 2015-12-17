@@ -22,7 +22,7 @@ func main() {
 }
 
 func isDashRun(cmd string) bool {
-	_, err := exec.LookPath("rfk-server")
+	_, err := exec.LookPath("rfk-" + cmd)
 	if err != nil {
 		return false
 	}
