@@ -203,7 +203,7 @@ func (r *WUHourlyResponse) stale(targetTime time.Time) bool {
 	}
 	lastHour := targetTime.Truncate(time.Hour)
 	isStale := (max.After(lastHour))
-	log.Printf("env: sensor: weather: cache stale=%t lastHour=%v", isStale, lastHour)
+	log.Printf("env: sensor: weather: cache stale=%t lastHour=%v", isStale, lastHour, max)
 
 	return isStale
 }
