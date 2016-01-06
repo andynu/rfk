@@ -43,6 +43,14 @@ func Skip() {
 	player.Skip()
 }
 
+func Pause() {
+	player.Pause()
+}
+
+func Unpause() {
+	player.Unpause()
+}
+
 func Reward() {
 	karma.Log(player.CurrentSong, 1)
 }

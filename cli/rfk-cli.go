@@ -24,6 +24,8 @@ func main() {
 			simpleCall("Player.SkipNoPunish")
 		case "reward":
 			simpleCall("Player.Reward")
+		case "pause":
+			simpleCall("Player.Pause")
 		default:
 			fmt.Printf("Unkown command %q\n", cmd)
 		}

@@ -32,6 +32,18 @@ func (t *Player) Reward(in In, out *Out) error {
 	return nil
 }
 
+func (t *Player) Pause(in In, out *Out) error {
+	log.Println("rpc: play/pause")
+	api.Pause()
+	return nil
+}
+
+func (t *Player) Unpause(in In, out *Out) error {
+	log.Println("rpc: play/pause")
+	api.Unpause()
+	return nil
+}
+
 func RPCListener() {
 	go func() {
 		rpcPlayer := new(Player)

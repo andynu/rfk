@@ -86,6 +86,19 @@ func TogglePlayPause() {
 	}
 }
 
+func Pause() {
+	playing_mu.Lock()
+	playing = false
+	playing_mu.Unlock()
+	Stop()
+}
+
+func Unpause() {
+	playing_mu.Lock()
+	playing = true
+	playing_mu.Unlock()
+}
+
 func logMetadata(path string) {
 	f, err := os.Open(path)
 	if err != nil {
