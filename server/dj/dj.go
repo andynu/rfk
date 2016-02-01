@@ -10,12 +10,12 @@ import (
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	noHashFilter(noNegFilter(randomNormalSong)),
+	noHashFilter(unratedFilter(randomNormalSong)),
 }
 
 var djNames = []string{
 	"requests",
-	"randomNonNegativeRankSong",
+	"randomUnratedRankSong",
 }
 
 func NextSong() (library.Song, error) {

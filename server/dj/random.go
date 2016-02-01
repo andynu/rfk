@@ -34,6 +34,19 @@ func noNegFilter(djFunc func() (library.Song, error)) func() (library.Song, erro
 	}
 }
 
+func unratedFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
+	return func() (library.Song, error) {
+		song, err := djFunc()
+		if err != nil {
+			return library.Song{}, err
+		}
+		if song.Rank != 0 {
+			return library.Song{}, fmt.Errorf("RatedSong")
+		}
+		return song, nil
+	}
+}
+
 func randomSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
 	idx := rand.Intn(len(library.Songs) - 1)

@@ -27,6 +27,20 @@ func (slice SongList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
+func (songs SongList) Add(song *Song) {
+	songs = append(songs, song)
+}
+
+func (songs SongList) Filter(filter func(*Song) bool) *SongList {
+	var filteredSongs SongList
+	for _, song := range songs {
+		if filter(song) {
+			filteredSongs.Add(song)
+		}
+	}
+	return &filteredSongs
+}
+
 var Songs SongList
 
 // Map from path to Song
