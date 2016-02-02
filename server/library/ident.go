@@ -84,6 +84,7 @@ func IdentifySongs(songs []*Song, outFile string) {
 		close(songsOutCh)
 	}()
 
+	// Consumes songs via SongsOutChan, collects hash and metadata into song_hashes.txt
 	go func() {
 		songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 		f, err := os.OpenFile(songHashesPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0660)
@@ -93,7 +94,8 @@ func IdentifySongs(songs []*Song, outFile string) {
 
 		i = 0
 		for song := range songsOutCh {
-			f.WriteString(fmt.Sprintf("%s\t%q\n", song.Hash, song.Path))
+			meta := song.Meta()
+			f.WriteString(fmt.Sprintf("%s\t%q\t%q\t%q\t%q\n", song.Hash, song.Path, meta.Artist, meta.Album, meta.Title))
 			i++
 			if i%100 == 0 {
 				log.Printf("Attempted identification of %d songs\n", i)
