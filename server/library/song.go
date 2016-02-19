@@ -28,7 +28,7 @@ func (s *Song) String() string {
 func (s *Song) Meta() SongMeta {
 	var meta SongMeta
 	if s.Path != "" {
-		meta = metaData(s.Path)
+		meta, _ = metaData(s.Path)
 	}
 	return meta
 }

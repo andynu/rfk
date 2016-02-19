@@ -27,6 +27,7 @@ func (slice SongList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
+
 func (songs SongList) Add(song *Song) {
 	songs = append(songs, song)
 }
@@ -41,7 +42,12 @@ func (songs SongList) Filter(filter func(*Song) bool) *SongList {
 	return &filteredSongs
 }
 
+type SongErrorList map[string]bool
+
+
 var Songs SongList
+
+var SongErrorPaths SongErrorList
 
 // Map from path to Song
 var songPathMap map[string]*Song
@@ -63,7 +69,9 @@ func Load() {
 
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 	songsPath := path.Join(config.DataPath, "songs.txt")
+	songErrorsPath := path.Join(config.DataPath, "song_errors.txt")
 
+	loadSongErrors(songErrorsPath)
 	loadSongs(songsPath)
 	loadSongHashesMap(songHashesPath)
 	go IdentifySongs(Songs, songHashesPath)
