@@ -12,6 +12,9 @@ func loadSongHashesMap(songHashesTxt string) error {
 	log.Printf("Loading songs from %q", songHashesTxt)
 	hashIdx := 0
 	pathIdx := 1
+	//artistIdx := 2
+	//albumIdx := 3
+	//titleIdx := 4
 
 	f, err := os.Open(songHashesTxt)
 	if err != nil {
@@ -19,25 +22,33 @@ func loadSongHashesMap(songHashesTxt string) error {
 	}
 	defer f.Close()
 	r := csv.NewReader(f)
-	r.Comma = '\t'
 	r.Comment = '#'
+	r.LazyQuotes = true
 
 	records, err := r.ReadAll()
 	if err != nil {
-		return err
+		log.Printf("ERROR: %v", err)
+		panic(err)
 	}
 
 	for _, record := range records {
-    song := songPathMap[record[pathIdx]]
+		path := record[pathIdx]
+		song := songPathMap[path]
 
-    if song == nil {
-      song = &Song{Path: record[pathIdx], Hash: record[hashIdx]}
-      Songs = append(Songs, song)
-      songPathMap[song.Path] = song
-    }
+		if SongErrorPaths[path] {
+			log.Printf("Skipping error path: %q", path)
+		} else {
 
-    song.Hash = record[hashIdx]
-    songHashMap[song.Hash] = append(songHashMap[song.Hash], song)
+			if song == nil {
+				song = &Song{Path: path, Hash: record[hashIdx]}
+				Songs = append(Songs, song)
+				songPathMap[song.Path] = song
+			}
+
+			song.Hash = record[hashIdx]
+			songHashMap[song.Hash] = append(songHashMap[song.Hash], song)
+		}
 	}
+	log.Printf("Loaded %d songs (paths: %d)", len(Songs), len(songPathMap))
 	return nil
 }
