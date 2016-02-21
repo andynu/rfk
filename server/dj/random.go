@@ -5,24 +5,7 @@ import (
 	"time"
 
 	"github.com/andynu/rfk/server/library"
-	"github.com/andynu/rfk/server/observer"
 )
-
-var Songs library.SongList
-
-func init() {
-	observer.Observe("library.loaded", func(msg interface{}) {
-		setSongs(library.Songs)
-	})
-}
-
-func setSongs(songs library.SongList) {
-	for _, song := range songs {
-		if song.Hash != "" && song.Rank >= 0 {
-			Songs = append(Songs, song)
-		}
-	}
-}
 
 func randomSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
