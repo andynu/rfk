@@ -10,7 +10,7 @@ import (
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	noHashFilter(noNegFilter(randomNormalSong)),
+	randomNormalSong,
 }
 
 var djNames = []string{

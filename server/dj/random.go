@@ -1,50 +1,40 @@
 package dj
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 )
 
-func noHashFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
-	return func() (library.Song, error) {
-		song, err := djFunc()
-		if err != nil {
-			return library.Song{}, err
-		}
-		if song.Hash == "" {
-			return library.Song{}, fmt.Errorf("NoHashSong")
-		}
-		return song, nil
-	}
+var Songs library.SongList
+
+func init() {
+	observer.Observe("library.loaded", func(msg interface{}) {
+		setSongs(library.Songs)
+	})
 }
 
-func noNegFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
-	return func() (library.Song, error) {
-		song, err := djFunc()
-		if err != nil {
-			return library.Song{}, err
+func setSongs(songs library.SongList) {
+	for _, song := range songs {
+		if song.Hash != "" && song.Rank >= 0 {
+			Songs = append(Songs, song)
 		}
-		if song.Rank < 0 {
-			return library.Song{}, fmt.Errorf("NegSong")
-		}
-		return song, nil
 	}
 }
 
 func randomSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
-	idx := rand.Intn(len(library.Songs) - 1)
-	song := *library.Songs[idx]
+	idx := rand.Intn(len(Songs) - 1)
+	song := *Songs[idx]
 	return song, nil
 }
 
 func randomNormalSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
-	idx := normalRand(len(library.Songs) - 1)
-	song := *library.Songs[idx]
+	idx := normalRand(len(Songs) - 1)
+	song := *Songs[idx]
 	return song, nil
 }
 

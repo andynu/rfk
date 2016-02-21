@@ -63,6 +63,7 @@ func Load() {
 	observer.Notify("library.loaded", struct{}{})
 	log.Printf("Loaded %d songs", len(Songs))
 	PathRoots = graph.LoadGraph(Songs)
+
 }
 
 // lookup Song by Song.Hash string
