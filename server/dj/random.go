@@ -1,63 +1,30 @@
 package dj
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
+	"fmt"
 
 	"github.com/andynu/rfk/server/library"
 )
 
-func noHashFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
-	return func() (library.Song, error) {
-		song, err := djFunc()
-		if err != nil {
-			return library.Song{}, err
-		}
-		if song.Hash == "" {
-			return library.Song{}, fmt.Errorf("NoHashSong")
-		}
-		return song, nil
-	}
-}
-
-func noNegFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
-	return func() (library.Song, error) {
-		song, err := djFunc()
-		if err != nil {
-			return library.Song{}, err
-		}
-		if song.Rank < 0 {
-			return library.Song{}, fmt.Errorf("NegSong")
-		}
-		return song, nil
-	}
-}
-
-func unratedFilter(djFunc func() (library.Song, error)) func() (library.Song, error) {
-	return func() (library.Song, error) {
-		song, err := djFunc()
-		if err != nil {
-			return library.Song{}, err
-		}
-		if song.Rank != 0 {
-			return library.Song{}, fmt.Errorf("RatedSong")
-		}
-		return song, nil
-	}
-}
-
 func randomSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
-	idx := rand.Intn(len(library.Songs) - 1)
-	song := *library.Songs[idx]
+	idx := rand.Intn(len(Songs) - 1)
+	song := *Songs[idx]
 	return song, nil
 }
 
 func randomNormalSong() (library.Song, error) {
 	rand.Seed(time.Now().UnixNano())
-	idx := normalRand(len(library.Songs) - 1)
-	song := *library.Songs[idx]
+	lensongs := len(Songs)
+	if lensongs == 0 {
+		return library.Song{}, fmt.Errorf("No songs")
+	}
+	idx := normalRand(lensongs - 1)
+	fmt.Printf("randomNormalSong: idx:%v len:%df\n", idx, len(Songs))
+	song := *Songs[idx]
+	fmt.Printf("randomNormalSong: %v %f\n", song, song.Rank)
 	return song, nil
 }
 

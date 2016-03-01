@@ -6,16 +6,25 @@ import (
 	"log"
 
 	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 )
+
+var Songs library.SongList
 
 var djs = []func() (library.Song, error){
 	requestedSong,
-	noHashFilter(unratedFilter(randomNormalSong)),
+	randomNormalSong,
 }
 
 var djNames = []string{
 	"requests",
-	"randomUnratedRankSong",
+	"randomNormalSong",
+}
+
+func init() {
+	observer.Observe("karma.loaded", func(msg interface{}) {
+		setSongs(library.Songs)
+	})
 }
 
 func NextSong() (library.Song, error) {
@@ -33,4 +42,17 @@ func NextSong() (library.Song, error) {
 	}
 
 	return library.Song{}, fmt.Errorf("DJFail")
+}
+
+func setSongs(songs library.SongList) {
+	considered := 0
+	selected := 0
+	for _, song := range songs {
+		considered++
+		if song.Hash != "" && song.Rank >= 0 {
+			selected++
+			Songs = append(Songs, song)
+		}
+	}
+	fmt.Printf("dj songs: considered=%d selected=%d\n", considered, selected)
 }

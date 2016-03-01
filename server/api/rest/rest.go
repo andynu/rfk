@@ -77,8 +77,10 @@ func playerStatusHandler(w http.ResponseWriter, r *http.Request) {
 func requestHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-type", "application/javascript")
-	//hashes := r.URL.Query().Get("hashes")
-	//api.Request(hashes)
+	hash := r.URL.Query().Get("hash")
+	var hashes []string
+	hashes = append(hashes, hash)
+	api.Request(hashes)
 	fmt.Fprintf(w, toJSON(api.Requests()))
 }
 
