@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"github.com/andynu/rfk/server/observer"
 )
 
 const debug = false
@@ -118,6 +119,8 @@ func (g *Graph) LoadGraph(songs []*Song) (roots []Node) {
 		node := *byPath[path]
 		roots = append(roots, node)
 	}
+
+	observer.Notify("graph.loaded", struct{}{})
 
 	return roots
 }

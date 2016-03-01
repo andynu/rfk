@@ -13,6 +13,7 @@ import (
 
 	"github.com/andynu/rfk/server/config"
 	"github.com/andynu/rfk/server/library"
+	"github.com/andynu/rfk/server/observer"
 )
 
 var mu sync.Mutex
@@ -133,6 +134,7 @@ func Load() error {
 
 	sort.Sort(library.Songs)
 
+	observer.Notify("karma.loaded", struct{}{})
 	log.Printf("Loading karma: %d impressions loaded", impressionCount)
 	return nil
 }
