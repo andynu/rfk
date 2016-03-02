@@ -7,6 +7,7 @@ import (
 
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
+	"github.com/andynu/rfk/server/dj/listened"
 )
 
 var Songs library.SongList
@@ -34,12 +35,21 @@ func NextSong() (library.Song, error) {
 
 	for i, dj := range djs {
 		next_song, err = dj()
+
+		if listened.Includes(next_song) {
+			continue
+		}
+
 		if err == nil {
+			listened.Add(next_song)
 			log.Printf("")
 			log.Printf("Using DJ:%v:%v", i, djNames[i])
 			return next_song, nil
 		}
 	}
+
+
+
 
 	return library.Song{}, fmt.Errorf("DJFail")
 }
