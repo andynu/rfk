@@ -18,14 +18,23 @@
 # Add files and commands to this file, like the example:
 #   watch(%r{file/path}) { `command(s)` }
 #
-guard :shell do
-  watch(/(.*).go/) {|m| 
-    test_file = m[1]+"_test.go"
-    dir = File.dirname(test_file)
-    if File.exist? test_file
-      cmd = "go test -cover ./#{dir}"
-      puts cmd
-      puts `#{cmd}`
-    end
-  }
-end
+#guard :shell do
+#  watch(/(.*).go/) {|m| 
+#    test_file = m[1]+"_test.go"
+#    dir = File.dirname(test_file)
+#    if File.exist? test_file
+#      cmd = "go test -cover ./#{dir}"
+#      puts cmd
+#      puts `#{cmd}`
+#    end
+#  }
+#end
+
+#guard :shell do
+#  watch(/(.*).go/) do |m|
+#    puts "---"
+#    puts `go build -o rfk-graph ./graph `
+#  end
+#end
+
+# vim: ft=ruby
