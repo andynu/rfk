@@ -22,6 +22,7 @@ import (
 func main() {
 	command := flag.String("e", "", "command")
 	configPath := flag.String("c", "", "config path")
+	dataPath := flag.String("d", "", "data path")
 	webPlayerOnly := flag.Bool("webplayer", false, "webplayer; no mpg123 output")
 	startPaused := flag.Bool("paused", false, "start paused")
 	flag.Parse()
@@ -30,8 +31,13 @@ func main() {
 		player.Silence()
 	}
 
-	checkPrereqs()
-	config.Load(configPath)
+	ensureBinaryExists("mpg123")
+	ensureConfig(*configPath)
+
+	config.Load()
+
+	ensureDataPath(*dataPath)
+	ensureSongs()
 
 	switch *command {
 	case "add":

@@ -83,7 +83,7 @@ func IdentifySongs(songs []*Song, outFile string) {
 						songErr.Song = song
 						songErr.Err = err
 						songsErrCh <- songErr
-						log.Printf("ident: err: %v for %s", err, song.Path)
+						//log.Printf("ident: err: %v for %s", err, song.Path)
 						return
 					}
 					song.Hash = hash

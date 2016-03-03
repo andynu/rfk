@@ -6,9 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"path"
+	"log"
+	"io"
 
 	"github.com/andynu/rfk/server/observer"
-	"path"
+
 )
 
 type ConfigType struct {
@@ -17,6 +20,7 @@ type ConfigType struct {
 }
 
 var Config ConfigType
+var ConfigPath string
 var DataPath string
 
 func init() {
@@ -25,15 +29,18 @@ func init() {
 	if err != nil {
 		panic(fmt.Errorf("No sciptDir! Crazy! %q", err))
 	}
-	DataPath = path.Join(scriptDir, "data")
+
+	dataPath := path.Join(scriptDir, "data")
+	if !pathExists(dataPath) {
+		wd, _ := os.Getwd()
+		dataPath = path.Join(wd, "data")
+	}
+	DataPath = dataPath
 }
 
-func Load(configPath *string) {
-	if configPath == nil || *configPath == "" {
-		defaultPath := "./config.json"
-		configPath = &defaultPath
-	}
-	config, err := loadJsonConfig(*configPath)
+func Load() {
+	fmt.Println("Config: %q", ConfigPath)
+	config, err := loadJsonConfig(ConfigPath)
 	if err != nil {
 		panic(err)
 	}
@@ -44,17 +51,45 @@ func Load(configPath *string) {
 	observer.Notify("config.loaded", struct{}{})
 }
 
-func dataPath() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	panicOnErr(err)
-	host, err := os.Hostname()
-	panicOnErr(err)
-	return fmt.Sprintf("%s/data/%s", dir, host)
+func DefaultConfigPath(configPath string) string {
+	if configPath == "" {
+		configPath = path.Join(scriptDir(), "config.json")
+	}
+	if !pathExists(configPath) {
+		wd, _ := os.Getwd()
+		configPath = path.Join(wd, "config.json")
+	}
+	ConfigPath = configPath
+	return configPath
 }
 
-func panicOnErr(err error) {
-	if err != nil {
-		panic(fmt.Errorf("library: %v", err))
+
+
+func CreateDefaultConfig(configPath string){
+	if !pathExists(configPath) {
+		fmt.Println(configPath)
+		configExamplePath := path.Join(scriptDir(), "config.json.example")
+		cp(configExamplePath, configPath)
+		log.Printf("Missing config: created default at %q", configPath)
+	}
+}
+
+func DefaultDataPath(dataPath string) string {
+	if dataPath == "" {
+		dataPath = path.Join(scriptDir(), "data")
+	}
+	if !pathExists(dataPath) {
+		wd, _ := os.Getwd()
+		dataPath = path.Join(wd, "data")
+	}
+	DataPath = dataPath
+	return dataPath
+}
+
+func CreateDataPath(dataPath string) {
+	if !pathExists(dataPath) {
+		log.Printf("Missing data dir: creating at %q", dataPath)
+		os.Mkdir(dataPath, 0760)
 	}
 }
 
@@ -73,4 +108,34 @@ func loadJsonConfig(jsonConfigFile string) (map[string]string, error) {
 	}
 
 	return config, nil
+}
+
+
+func scriptDir() string {
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	return dir
+}
+
+func pathExists(path string) bool {
+	_, err := os.Stat(path)
+	return (err == nil)
+}
+
+func cp(src, dst string) error {
+	s, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer s.Close()
+
+	d, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+
+	if _, err := io.Copy(d, s); err != nil {
+		d.Close()
+		return err
+	}
+	return d.Close()
 }
