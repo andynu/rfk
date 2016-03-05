@@ -27,7 +27,9 @@ func RESTListener() {
 
 		http.HandleFunc("/search", searchHandler)
 		http.HandleFunc("/searchRequest", searchRequestHandler)
+		http.HandleFunc("/searchUnrequest", searchUnrequestHandler)
 		http.HandleFunc("/request", requestHandler)
+		http.HandleFunc("/unrequest", unrequestHandler)
 		http.HandleFunc("/requests", requestsHandler)
 		http.HandleFunc("/clearRequests", clearRequestsHandler)
 
@@ -84,6 +86,16 @@ func requestHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, toJSON(api.Requests()))
 }
 
+func unrequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+	hash := r.URL.Query().Get("hash")
+	var hashes []string
+	hashes = append(hashes, hash)
+	api.Unrequest(hashes)
+	fmt.Fprintf(w, toJSON(api.Requests()))
+}
+
 func requestsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-type", "application/javascript")
@@ -123,6 +135,17 @@ func searchRequestHandler(w http.ResponseWriter, r *http.Request) {
 	term := r.URL.Query().Get("term")
 
 	api.SearchRequest(term)
+
+	fmt.Fprintf(w, toJSON(true))
+}
+
+func searchUnrequestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-type", "application/javascript")
+
+	term := r.URL.Query().Get("term")
+
+	api.SearchUnrequest(term)
 
 	fmt.Fprintf(w, toJSON(true))
 }

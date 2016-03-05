@@ -65,9 +65,21 @@ func SearchRequest(term string) []*library.Song {
 	return songs
 }
 
+func SearchUnrequest(term string) []*library.Song {
+	songs := library.Search(term)
+	dj.Unrequest(songs)
+	return songs
+}
+
 func Request(hashes []string) []*library.Song {
 	songs, _ := library.ByHashes(hashes)
 	dj.Request(songs)
+	return songs
+}
+
+func Unrequest(hashes []string) []*library.Song {
+	songs, _ := library.ByHashes(hashes)
+	dj.Unrequest(songs)
 	return songs
 }
 

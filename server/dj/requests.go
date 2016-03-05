@@ -32,9 +32,24 @@ func (list *requestList) pop() *list.Element {
 	return e
 }
 
+func remove(song *library.Song){
+  for e := requests.Front(); e != nil; e = e.Next() {
+		rsong, _ := e.Value.(library.Song)
+		if rsong.Hash == song.Hash {
+		  requests.Remove(e)
+    }
+  }
+}
+
 func (list *requestList) addAll(songs []*library.Song) {
 	for _, song := range songs {
 		list.PushBack(*song)
+	}
+}
+
+func (list *requestList) removeAll(songs []*library.Song) {
+	for _, song := range songs {
+		remove(song)
 	}
 }
 
@@ -50,6 +65,13 @@ func Request(songs []*library.Song) {
 	defer requests.Unlock()
 
 	requests.addAll(songs)
+}
+
+func Unrequest(songs []*library.Song) {
+	requests.Lock()
+	defer requests.Unlock()
+
+	requests.removeAll(songs)
 }
 
 func ClearRequests() {
