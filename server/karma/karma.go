@@ -10,8 +10,10 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/historicalEnv"
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
 )
@@ -82,8 +84,8 @@ func Load() error {
 	impressionIdx := 3
 
 	// logType = env
-	//tagIdx := 2
-	//valIdx := 3
+	tagIdx := 2
+	valIdx := 3
 
 	impressionLogPath := path.Join(config.DataPath, "impression.log")
 	log.Printf("Reading impressions from: %q", impressionLogPath)
@@ -106,7 +108,8 @@ func Load() error {
 		if len(record) != 4 {
 			return fmt.Errorf("Malformed impression.log, wrong number of columns %d expected 4", len(record))
 		}
-		_ = record[timestampIdx]
+		timestampStr := record[timestampIdx]
+		timestamp, _ := time.Parse("2016/02/21 20:18:49.091737", timestampStr)
 		logType := record[logTypeIdx]
 		switch logType {
 		case "karma":
@@ -121,15 +124,16 @@ func Load() error {
 			}
 
 			impressionCount++
-			//historicalEnv.impress(song, impression)
+			historicalEnv.Impress(timestamp, song, impression)
 			go song.PathGraphImpress(impression)
 
 		case "env":
-			//sensor := record[sensorIdx]
-			//val := record[valIdx]
-			//historicalEnv.update(sensor, val)
+			sensor := record[tagIdx]
+			val := record[valIdx]
+			historicalEnv.Update(timestamp, sensor, val)
 		}
 	}
+	historicalEnv.Print()
 	//log.Printf("%v", SongKarma)
 
 	sort.Sort(library.Songs)
