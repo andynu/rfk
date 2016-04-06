@@ -26,6 +26,8 @@ func main() {
 			simpleCall("Player.Reward")
 		case "pause":
 			simpleCall("Player.Pause")
+		case "play":
+			simpleCall("Player.Unpause")
 		default:
 			fmt.Printf("Unkown command %q\n", cmd)
 		}
