@@ -15,7 +15,7 @@ import (
 	"github.com/andynu/rfk/server/player"
 )
 
-func RESTListener() {
+func Listener() {
 	go func() {
 
 		http.HandleFunc("/", rootHandler)

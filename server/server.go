@@ -43,9 +43,9 @@ func main() {
 
 	default:
 
-		rpc.RPCListener()
-		console.InputListener()
-		rest.RESTListener()
+		rpc.Listener()
+		console.Listener()
+		rest.Listener()
 
 		library.Load()
 		karma.Setup()

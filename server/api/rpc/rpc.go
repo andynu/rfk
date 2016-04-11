@@ -44,7 +44,7 @@ func (t *Player) Unpause(in In, out *Out) error {
 	return nil
 }
 
-func RPCListener() {
+func Listener() {
 	go func() {
 		rpcPlayer := new(Player)
 		rpc.Register(rpcPlayer)

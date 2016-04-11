@@ -11,7 +11,7 @@ import (
 	"github.com/andynu/rfk/server/library"
 )
 
-func InputListener() {
+func Listener() {
 	go func() {
 		reader := bufio.NewReader(os.Stdin)
 		for {
