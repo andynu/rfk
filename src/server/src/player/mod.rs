@@ -1,7 +1,9 @@
-use song::Song;
 use std::time::Duration;
 use std::thread::sleep;
 use std::process::Command;
+
+use config::Config;
+use song::Song;
 
 // player
 pub enum PlayerState {
@@ -12,19 +14,29 @@ pub enum PlayerState {
 
 pub struct Player {
     paused: bool,
+    simulated: bool,
 }
 
 impl Player {
-    pub fn new() -> Player {
-        Player{paused: true}
+    pub fn new(config: &Config) -> Player {
+        Player{
+            paused: false, 
+            simulated: config.simulated,
+        }
     }
 
     pub fn play(&self, song: Song) {
         println!("playing song");
-        let output = Command::new("mpg123").arg(&song.path).output().unwrap_or_else(|e|{
-            panic!("failed to execute process: {}", e)
-        });
-        println!("> {}", String::from_utf8_lossy(&output.stdout));
+        if self.simulated {
+            let dur = Duration::from_secs(5);
+            println!("simulated play: waiting {:?}", dur);
+            sleep(dur);
+        } else {
+            let output = Command::new("mpg123").arg(&song.path).output().unwrap_or_else(|e|{
+                panic!("failed to execute process: {}", e)
+            });
+            println!("> {}", String::from_utf8_lossy(&output.stdout));
+        }
     }
 
     pub fn pause(&mut self) {
@@ -33,12 +45,9 @@ impl Player {
 
     pub fn wait_to_play(&self) {
         if self.paused {
-            let dur = Duration::from_secs(5);
-            println!("waiting {:?}", dur);
+            let dur = Duration::from_secs(1);
+            println!("paused: waiting {:?}", dur);
             sleep(dur);
-        } else {
-            println!("nothing to wait for. proceed.");
-
         }
     }
 

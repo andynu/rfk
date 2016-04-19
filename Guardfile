@@ -39,7 +39,7 @@ guard :shell do
     puts
     puts "-"*80
     puts
-    cmd = 'cd src/server;RUST_BACKTRACE=1 cargo run --verbose -- --limit 3'
+    cmd = 'cd src/server;RUST_BACKTRACE=1 cargo run --verbose -- --simulated --limit 3'
     puts "#{cmd}"
     puts `#{cmd}`
   end
