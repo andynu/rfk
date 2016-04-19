@@ -30,11 +30,19 @@
 #  }
 #end
 
-#guard :shell do
-#  watch(/(.*).go/) do |m|
-#    puts "---"
-#    puts `go build -o rfk-graph ./graph `
-#  end
-#end
+guard :shell do
+  #watch(/(.*).go/) do |m|
+  #  puts "---"
+  #  puts `go build -o rfk-graph ./graph `
+  #end
+  watch(/.*\/.*.rs/) do |m|
+    puts
+    puts "-"*80
+    puts
+    cmd = 'cd src/server;RUST_BACKTRACE=1 cargo run --verbose -- --limit 3'
+    puts "#{cmd}"
+    puts `#{cmd}`
+  end
+end
 
 # vim: ft=ruby

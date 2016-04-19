@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="server" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$USER_HOME$/rfk/src/server" external.system.id="Cargo" type="RUST_MODULE" version="4">
+  <component name="CargoModuleData">
+    <option name="myTargets">
+      <list>
+        <SerializableTarget>
+          <option name="kind" value="BIN" />
+          <option name="path" value="src/main.rs" />
+        </SerializableTarget>
+      </list>
+    </option>
+    <option name="myExternCrates">
+      <list>
+        <SerializableExternCrate>
+          <option name="name" value="rand" />
+          <option name="path" value="$USER_HOME$/.cargo/registry/src/github.com-88ac128001ac3a9a/rand-0.3.14/src/lib.rs" />
+        </SerializableExternCrate>
+        <SerializableExternCrate>
+          <option name="name" value="getopts" />
+          <option name="path" value="$USER_HOME$/.cargo/registry/src/github.com-88ac128001ac3a9a/getopts-0.2.14/src/lib.rs" />
+        </SerializableExternCrate>
+        <SerializableExternCrate>
+          <option name="name" value="csv" />
+          <option name="path" value="$USER_HOME$/.cargo/registry/src/github.com-88ac128001ac3a9a/csv-0.14.4/src/lib.rs" />
+        </SerializableExternCrate>
+      </list>
+    </option>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/benches" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Cargo: rand 0.3.14" level="project" />
+    <orderEntry type="library" name="Cargo: getopts 0.2.14" level="project" />
+    <orderEntry type="library" name="Cargo: csv 0.14.4" level="project" />
+  </component>
+</module>

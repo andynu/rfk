@@ -2,7 +2,7 @@
 
 A jukebox that plays random songs. (for now)
 
-**This is a toy project as I learn go.**
+**This is a toy project as I learn rust.**
 
 ## Prereqs
 

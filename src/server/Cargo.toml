@@ -1,0 +1,9 @@
+[package]
+name = "server"
+version = "0.1.0"
+authors = ["andy <andynu@gmail.com>"]
+
+[dependencies]
+getopts = "0.2"
+csv = "0.14.4"
+rand = "0.3.14"
