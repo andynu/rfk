@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"sync"
+	"time"
 
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
@@ -25,6 +26,24 @@ var playing_mu sync.Mutex
 var playing bool = true
 
 var sleepPlayer bool = false
+
+func PlaySongs(nextSongCh chan library.Song) {
+	for {
+		if !IsPlaying() {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		song := <-nextSongCh
+
+		err := Play(song)
+		if err != nil {
+			log.Printf("rfk: %v", err)
+			time.Sleep(1 * time.Second)
+		}
+		//panic("howmanygoroutines?")
+	}
+}
 
 func Silence() {
 	sleepPlayer = true

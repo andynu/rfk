@@ -10,6 +10,17 @@ import (
 	"github.com/andynu/rfk/server/api"
 )
 
+func Listener() {
+	rpcPlayer := new(Player)
+	rpc.Register(rpcPlayer)
+	rpc.HandleHTTP()
+	l, e := net.Listen("tcp", ":7777")
+	if e != nil {
+		log.Fatal("listen error:", e)
+	}
+	http.Serve(l, nil)
+}
+
 type In int
 type Out int
 type Player struct{}
@@ -42,17 +53,4 @@ func (t *Player) Unpause(in In, out *Out) error {
 	log.Println("rpc: play/pause")
 	api.Unpause()
 	return nil
-}
-
-func Listener() {
-	go func() {
-		rpcPlayer := new(Player)
-		rpc.Register(rpcPlayer)
-		rpc.HandleHTTP()
-		l, e := net.Listen("tcp", ":7777")
-		if e != nil {
-			log.Fatal("listen error:", e)
-		}
-		http.Serve(l, nil)
-	}()
 }

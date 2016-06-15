@@ -1,6 +1,6 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
-
+require 'rainbow'
 ## Uncomment and set this to only include directories you want to watch
 # directories %w(app lib config test spec features) \
 #  .select{|d| Dir.exists?(d) ? d : UI.warning("Directory #{d} does not exist")}
@@ -30,11 +30,19 @@
 #  }
 #end
 
-#guard :shell do
-#  watch(/(.*).go/) do |m|
-#    puts "---"
-#    puts `go build -o rfk-graph ./graph `
-#  end
-#end
+guard :shell do
+  watch(/(.*).go/) do |m|
+    puts "---"
+    cmd = "go build -o rfk-server ./server "
+    puts `#{cmd}`
+
+    exit_code = $?.to_i
+    if exit_code == 0
+      puts Rainbow("OK").green
+    else
+      puts Rainbow("Error #{exit_code}").red
+    end
+  end
+end
 
 # vim: ft=ruby

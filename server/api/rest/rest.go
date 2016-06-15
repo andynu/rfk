@@ -16,30 +16,27 @@ import (
 )
 
 func Listener() {
-	go func() {
+	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/status", playerStatusHandler)
+	http.HandleFunc("/next", nextHandler)
+	http.HandleFunc("/skip", skipHandler)
+	http.HandleFunc("/reward", rewardHandler)
+	http.HandleFunc("/playpause", playPauseHandler)
 
-		http.HandleFunc("/", rootHandler)
-		http.HandleFunc("/status", playerStatusHandler)
-		http.HandleFunc("/next", nextHandler)
-		http.HandleFunc("/skip", skipHandler)
-		http.HandleFunc("/reward", rewardHandler)
-		http.HandleFunc("/playpause", playPauseHandler)
+	http.HandleFunc("/search", searchHandler)
+	http.HandleFunc("/searchRequest", searchRequestHandler)
+	http.HandleFunc("/searchUnrequest", searchUnrequestHandler)
+	http.HandleFunc("/request", requestHandler)
+	http.HandleFunc("/unrequest", unrequestHandler)
+	http.HandleFunc("/requests", requestsHandler)
+	http.HandleFunc("/clearRequests", clearRequestsHandler)
 
-		http.HandleFunc("/search", searchHandler)
-		http.HandleFunc("/searchRequest", searchRequestHandler)
-		http.HandleFunc("/searchUnrequest", searchUnrequestHandler)
-		http.HandleFunc("/request", requestHandler)
-		http.HandleFunc("/unrequest", unrequestHandler)
-		http.HandleFunc("/requests", requestsHandler)
-		http.HandleFunc("/clearRequests", clearRequestsHandler)
+	http.HandleFunc("/stream", streamHandler)
 
-		http.HandleFunc("/stream", streamHandler)
-
-		err := http.ListenAndServe(":7778", nil)
-		if err != nil {
-			panic(err)
-		}
-	}()
+	err := http.ListenAndServe(":7778", nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {

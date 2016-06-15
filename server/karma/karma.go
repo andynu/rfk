@@ -26,6 +26,20 @@ var SongKarma map[string]int
 
 var graph *library.Graph
 
+func init() {
+	observer.Observe("player.played", func(msg interface{}) {
+		song := msg.(*library.Song)
+		log.Printf("Played %v", song)
+		Log(song, 1)
+	})
+
+	observer.Observe("player.skip", func(msg interface{}) {
+		song := msg.(*library.Song)
+		log.Printf("Skipped %v", song)
+		Log(song, -2)
+	})
+}
+
 func Setup() {
 	logfile, err := os.OpenFile(path.Join(config.DataPath, "impression.log"),
 		os.O_CREATE|os.O_WRONLY|os.O_APPEND,

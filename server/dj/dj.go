@@ -4,10 +4,11 @@ package dj
 import (
 	"fmt"
 	"log"
+	"time"
 
+	"github.com/andynu/rfk/server/dj/listened"
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
-	"github.com/andynu/rfk/server/dj/listened"
 )
 
 var Songs library.SongList
@@ -26,6 +27,18 @@ func init() {
 	observer.Observe("karma.loaded", func(msg interface{}) {
 		setSongs(library.Songs)
 	})
+}
+
+func ServeSongs(nextSongCh chan library.Song) {
+	for {
+		song, err := NextSong()
+		if err != nil {
+			log.Printf("rfk: %v", err)
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		nextSongCh <- song
+	}
 }
 
 func NextSong() (library.Song, error) {
@@ -47,9 +60,6 @@ func NextSong() (library.Song, error) {
 			return next_song, nil
 		}
 	}
-
-
-
 
 	return library.Song{}, fmt.Errorf("DJFail")
 }
