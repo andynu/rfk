@@ -13,11 +13,6 @@ import (
 	"github.com/andynu/rfk/server/library"
 )
 
-func ensureDataPath(dataPath string) {
-	dataPath = config.DefaultDataPath(dataPath)
-	config.CreateDataPath(dataPath)
-}
-
 func ensureSongs() {
 	songsPath := path.Join(config.DataPath, "songs.txt")
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")

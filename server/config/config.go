@@ -37,9 +37,13 @@ func init() {
 	DataPath = dataPath
 }
 
-func Load(configPath string) {
+func Load(configPath string, dataPath string) {
 	ConfigPath = DefaultConfigPath(configPath)
+	DataPath = DefaultDataPath(dataPath)
+
 	CreateDefaultConfig(ConfigPath)
+	CreateDataPath(DataPath)
+
 	fmt.Println("Config: %q", ConfigPath)
 	config, err := loadJsonConfig(ConfigPath)
 	if err != nil {
@@ -80,7 +84,6 @@ func DefaultDataPath(dataPath string) string {
 		wd, _ := os.Getwd()
 		dataPath = path.Join(wd, "data")
 	}
-	DataPath = dataPath
 	return dataPath
 }
 

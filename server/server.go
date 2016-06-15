@@ -33,9 +33,8 @@ func main() {
 
 	ensureBinaryExists("mpg123")
 
-	config.Load(*configPath)
+	config.Load(*configPath, *dataPath)
 
-	ensureDataPath(*dataPath)
 	ensureSongs()
 
 	switch *command {
