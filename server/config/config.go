@@ -3,15 +3,14 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"path"
-	"log"
 	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"path"
+	"path/filepath"
 
 	"github.com/andynu/rfk/server/observer"
-
 )
 
 type ConfigType struct {
@@ -38,7 +37,9 @@ func init() {
 	DataPath = dataPath
 }
 
-func Load() {
+func Load(configPath string) {
+	ConfigPath = DefaultConfigPath(configPath)
+	CreateDefaultConfig(ConfigPath)
 	fmt.Println("Config: %q", ConfigPath)
 	config, err := loadJsonConfig(ConfigPath)
 	if err != nil {
@@ -59,13 +60,10 @@ func DefaultConfigPath(configPath string) string {
 		wd, _ := os.Getwd()
 		configPath = path.Join(wd, "config.json")
 	}
-	ConfigPath = configPath
 	return configPath
 }
 
-
-
-func CreateDefaultConfig(configPath string){
+func CreateDefaultConfig(configPath string) {
 	if !pathExists(configPath) {
 		fmt.Println(configPath)
 		configExamplePath := path.Join(scriptDir(), "config.json.example")
@@ -109,7 +107,6 @@ func loadJsonConfig(jsonConfigFile string) (map[string]string, error) {
 
 	return config, nil
 }
-
 
 func scriptDir() string {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))

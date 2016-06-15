@@ -9,22 +9,16 @@ import (
 	"path"
 	"strings"
 
-	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/config"
+	"github.com/andynu/rfk/server/library"
 )
-
-func ensureConfig(configPath string){
-	configPath = config.DefaultConfigPath(configPath)
-	config.CreateDefaultConfig(configPath)
-}
 
 func ensureDataPath(dataPath string) {
 	dataPath = config.DefaultDataPath(dataPath)
 	config.CreateDataPath(dataPath)
 }
 
-
-func ensureSongs(){
+func ensureSongs() {
 	songsPath := path.Join(config.DataPath, "songs.txt")
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
 	if !pathExists(songsPath) && !pathExists(songHashesPath) {
@@ -39,10 +33,6 @@ func ensureSongs(){
 	}
 }
 
-
-
-
-
 func pathExists(path string) bool {
 	_, err := os.Stat(path)
 	return (err == nil)
@@ -54,8 +44,6 @@ func ensureBinaryExists(executable string) {
 		panic(fmt.Errorf("prereq: %q [failed]: %q", executable, err))
 	}
 }
-
-
 
 func gets() string {
 	reader := bufio.NewReader(os.Stdin)
