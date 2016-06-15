@@ -133,7 +133,7 @@ func Load() error {
 			historicalEnv.Update(timestamp, sensor, val)
 		}
 	}
-	historicalEnv.Print()
+	//historicalEnv.Print()
 	//log.Printf("%v", SongKarma)
 
 	sort.Sort(library.Songs)
