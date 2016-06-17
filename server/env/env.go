@@ -13,6 +13,29 @@ var sensors_mu sync.Mutex
 var sensors []Sensor
 var samples []Sample
 
+func init() {
+	updateEnv()
+}
+
+func Updater() {
+	tick := time.NewTicker(time.Hour).C
+	for {
+		<-tick
+		log.Printf("env: start update")
+		updateEnv()
+		log.Printf("env: end update")
+	}
+}
+
+func updateEnv() {
+	oldSamples := samples
+	newSamples := senseEnv()
+
+	diffSamples := SamplesDifference(newSamples, oldSamples)
+	logSamples(diffSamples)
+	samples = newSamples
+}
+
 func SamplesDifference(a []Sample, b []Sample) []Sample {
 	var diffSamples []Sample
 
@@ -68,26 +91,4 @@ func logSamples(s []Sample) {
 	for _, sample := range s {
 		karma.LogEnv(sample.SensorName, sample.Value)
 	}
-}
-
-func updateEnv() {
-	oldSamples := samples
-	newSamples := senseEnv()
-
-	diffSamples := SamplesDifference(newSamples, oldSamples)
-	logSamples(diffSamples)
-	samples = newSamples
-}
-
-func StartEnvUpdater() {
-	updateEnv()
-	go func() {
-		tick := time.NewTicker(time.Hour).C
-		for {
-			<-tick
-			log.Printf("env: start update")
-			updateEnv()
-			log.Printf("env: end update")
-		}
-	}()
 }

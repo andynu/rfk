@@ -11,7 +11,6 @@ import (
 	"github.com/andynu/rfk/server/dj"
 	"github.com/andynu/rfk/server/env"
 	_ "github.com/andynu/rfk/server/env/sensors/weather"
-	"github.com/andynu/rfk/server/karma"
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/player"
 )
@@ -28,10 +27,6 @@ func main() {
 	startPaused := flag.Bool("paused", false, "start paused")
 	flag.Parse()
 
-	if *webPlayerOnly {
-		player.Silence()
-	}
-
 	config.Load(*configPath, *dataPath)
 
 	ensureBinaryExists("mpg123")
@@ -43,22 +38,26 @@ func main() {
 
 	default:
 
-		go rpc.Listener()
-		go console.Listener()
-		go rest.Listener()
-
 		library.Load()
-		karma.Setup()
-		env.StartEnvUpdater()
+
+		if *webPlayerOnly {
+			player.Silence()
+		}
 
 		if *startPaused {
-			player.TogglePlayPause()
+			player.Pause()
 		}
 
 		nextSongCh := make(chan library.Song, 1)
 
 		go dj.ServeSongs(nextSongCh)
 		go player.PlaySongs(nextSongCh)
+
+		go env.Updater()
+
+		go rpc.Listener()
+		go console.Listener()
+		go rest.Listener()
 
 	} // switch
 

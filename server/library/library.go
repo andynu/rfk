@@ -27,7 +27,6 @@ func (slice SongList) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-
 func (songs SongList) Add(song *Song) {
 	songs = append(songs, song)
 }
@@ -43,7 +42,6 @@ func (songs SongList) Filter(filter func(*Song) bool) *SongList {
 }
 
 type SongErrorList map[string]bool
-
 
 var Songs SongList
 

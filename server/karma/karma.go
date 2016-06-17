@@ -27,6 +27,21 @@ var SongKarma map[string]int
 var graph *library.Graph
 
 func init() {
+	observer.Observe("config.loaded", func(msg interface{}) {
+		logfile, err := os.OpenFile(path.Join(config.DataPath, "impression.log"),
+			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+			0666)
+		if err != nil {
+			panic(err)
+		}
+		logger = log.New(logfile, "", log.Ldate|log.Ltime|log.Lmicroseconds)
+
+		err = Load()
+		if err != nil {
+			panic(err)
+		}
+	})
+
 	observer.Observe("player.played", func(msg interface{}) {
 		song := msg.(*library.Song)
 		log.Printf("Played %v", song)
@@ -38,21 +53,6 @@ func init() {
 		log.Printf("Skipped %v", song)
 		Log(song, -2)
 	})
-}
-
-func Setup() {
-	logfile, err := os.OpenFile(path.Join(config.DataPath, "impression.log"),
-		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
-		0666)
-	if err != nil {
-		panic(err)
-	}
-	logger = log.New(logfile, "", log.Ldate|log.Ltime|log.Lmicroseconds)
-
-	err = Load()
-	if err != nil {
-		panic(err)
-	}
 
 }
 
