@@ -78,4 +78,5 @@ or
 
 ## Attributions
 
-* Thanks to David Howden for the dhowden/tag library, used for audio only checksums and mp3 metadata extraction. See [LICENSE](src/github.com/dhowden/tag/LICENSE)
+* Thanks to David Howden for the dhowden/tag library, used for audio only checksums and mp3 metadata extraction. See [LICENSE](vendor/github.com/dhowden/tag/LICENSE)
+* Thanks to Kohei Shitaune for the shkh/lastfm-go library, used to pull metadata from lastfm. See [LICENSE](vendor/github.com/shkh/lastfm-go/LICENSE)
