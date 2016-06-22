@@ -1,14 +1,16 @@
 package dj
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
 	"time"
-	"fmt"
 
 	"github.com/andynu/rfk/server/library"
 )
 
 func randomSong() (library.Song, error) {
+	log.Printf("randomSong()")
 	rand.Seed(time.Now().UnixNano())
 	idx := rand.Intn(len(Songs) - 1)
 	song := *Songs[idx]
@@ -16,6 +18,7 @@ func randomSong() (library.Song, error) {
 }
 
 func randomNormalSong() (library.Song, error) {
+	log.Printf("randomNormalSong()")
 	rand.Seed(time.Now().UnixNano())
 	lensongs := len(Songs)
 	if lensongs == 0 {

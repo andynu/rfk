@@ -66,11 +66,11 @@ func Load() {
 	songPathMap = make(map[string]*Song, 1000)
 
 	songHashesPath := path.Join(config.DataPath, "song_hashes.txt")
-	songsPath := path.Join(config.DataPath, "songs.txt")
+	//songsPath := path.Join(config.DataPath, "songs.txt")
 	songErrorsPath := path.Join(config.DataPath, "song_errors.txt")
 
 	loadSongErrors(songErrorsPath)
-	loadSongs(songsPath)
+	//loadSongs(songsPath)
 	loadSongHashesMap(songHashesPath)
 	go IdentifySongs(Songs, songHashesPath)
 
@@ -110,6 +110,21 @@ func Search(term string) []*Song {
 		}
 	}
 	return songs
+}
+
+func Artists() []string {
+	artist_map := make(map[string]bool, 1000)
+	for _, song := range Songs {
+		//fmt.Printf("artists: %v\n", song)
+		//fmt.Printf("artists: %v\n", song.Artist)
+		artist_map[song.Artist] = true
+	}
+
+	var artists []string
+	for artist := range artist_map {
+		artists = append(artists, artist)
+	}
+	return artists
 }
 
 func panicOnErr(err error) {

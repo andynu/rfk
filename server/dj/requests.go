@@ -3,6 +3,7 @@ package dj
 import (
 	"container/list"
 	"errors"
+	"log"
 
 	"sync"
 
@@ -32,13 +33,13 @@ func (list *requestList) pop() *list.Element {
 	return e
 }
 
-func remove(song *library.Song){
-  for e := requests.Front(); e != nil; e = e.Next() {
+func remove(song *library.Song) {
+	for e := requests.Front(); e != nil; e = e.Next() {
 		rsong, _ := e.Value.(library.Song)
 		if rsong.Hash == song.Hash {
-		  requests.Remove(e)
-    }
-  }
+			requests.Remove(e)
+		}
+	}
 }
 
 func (list *requestList) addAll(songs []*library.Song) {
@@ -99,5 +100,6 @@ func Requests() []*library.Song {
 
 // see dj.NextSong()
 func requestedSong() (library.Song, error) {
+	log.Printf("requestedSong()")
 	return PopRequest()
 }

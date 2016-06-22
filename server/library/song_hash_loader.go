@@ -12,9 +12,9 @@ func loadSongHashesMap(songHashesTxt string) error {
 	log.Printf("Loading songs from %q", songHashesTxt)
 	hashIdx := 0
 	pathIdx := 1
-	//artistIdx := 2
-	//albumIdx := 3
-	//titleIdx := 4
+	artistIdx := 2
+	albumIdx := 3
+	titleIdx := 4
 
 	f, err := os.Open(songHashesTxt)
 	if err != nil {
@@ -40,7 +40,15 @@ func loadSongHashesMap(songHashesTxt string) error {
 		} else {
 
 			if song == nil {
-				song = &Song{Path: path, Hash: record[hashIdx]}
+				song = &Song{
+					Path: path,
+					Hash: record[hashIdx],
+					SongMeta: SongMeta{
+						Artist: record[artistIdx],
+						Album:  record[albumIdx],
+						Title:  record[titleIdx],
+					},
+				}
 				Songs = append(Songs, song)
 				songPathMap[song.Path] = song
 			}

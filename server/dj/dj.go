@@ -8,7 +8,6 @@ import (
 
 	"github.com/andynu/rfk/server/dj/listened"
 	"github.com/andynu/rfk/server/library"
-	"github.com/andynu/rfk/server/observer"
 )
 
 var Songs library.SongList
@@ -24,9 +23,9 @@ var djNames = []string{
 }
 
 func init() {
-	observer.Observe("karma.loaded", func(msg interface{}) {
-		setSongs(library.Songs)
-	})
+	//observer.Observe("karma.loaded", func(msg interface{}) {
+	//	log.Printf("dj songs set")
+	//})
 }
 
 func ServeSongs(nextSongCh chan library.Song) {
@@ -50,6 +49,7 @@ func NextSong() (library.Song, error) {
 		next_song, err = dj()
 
 		if listened.Includes(next_song) {
+			log.Printf("Skipping repeat song: %v", next_song)
 			continue
 		}
 
@@ -64,7 +64,7 @@ func NextSong() (library.Song, error) {
 	return library.Song{}, fmt.Errorf("DJFail")
 }
 
-func setSongs(songs library.SongList) {
+func SetSongs(songs library.SongList) {
 	considered := 0
 	selected := 0
 	for _, song := range songs {

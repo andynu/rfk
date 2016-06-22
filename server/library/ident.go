@@ -66,12 +66,10 @@ func IdentifySongs(songs []*Song, outFile string) {
 	var songsErrCh = make(chan SongErr)
 	var wg sync.WaitGroup
 
-	i := 0
 	if len(songs) != 0 {
 		// from Params
 		for _, song := range songs {
 			if song.Hash == "" {
-				i++
 				wg.Add(1)
 				go func(song *Song) {
 					sem <- true
@@ -109,7 +107,6 @@ func IdentifySongs(songs []*Song, outFile string) {
 			panic(fmt.Errorf("%q: %v", songHashesPath, err))
 		}
 
-		i = 0
 		for songErr := range songsErrCh {
 			f.WriteString(fmt.Sprintf("%q\t%q\n",
 				songErr.Song.Path,
@@ -126,7 +123,7 @@ func IdentifySongs(songs []*Song, outFile string) {
 		}
 		csv := csv.NewWriter(f)
 
-		i = 0
+		i := 0
 		for song := range songsOutCh {
 			meta := song.Meta()
 

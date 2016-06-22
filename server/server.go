@@ -39,6 +39,7 @@ func main() {
 	default:
 
 		library.Load()
+		dj.SetSongs(library.Songs)
 
 		if *webPlayerOnly {
 			player.Silence()
@@ -48,10 +49,7 @@ func main() {
 			player.Pause()
 		}
 
-		nextSongCh := make(chan library.Song, 1)
-
-		go dj.ServeSongs(nextSongCh)
-		go player.PlaySongs(nextSongCh)
+		player.PlaySongs()
 
 		go env.Updater()
 

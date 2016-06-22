@@ -12,6 +12,7 @@ type Song struct {
 	Rank float64
 	pathNode
 	sync.Mutex
+	SongMeta
 }
 
 type SongMeta struct {

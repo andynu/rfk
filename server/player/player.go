@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/andynu/rfk/server/dj"
 	"github.com/andynu/rfk/server/library"
 	"github.com/andynu/rfk/server/observer"
 
@@ -27,21 +28,36 @@ var playing bool = true
 
 var sleepPlayer bool = false
 
-func PlaySongs(nextSongCh chan library.Song) {
+func PlaySongs() {
+	//var wait_for_dj_songs chan bool
+	//observer.Observe("karma.loaded", func(msg interface{}) {
+	//	wait_for_dj_songs <- true
+	//})
+	//<-wait_for_dj_songs
+
+	err_count := 0
 	for {
 		if !IsPlaying() {
 			time.Sleep(1 * time.Second)
 			continue
 		}
 
-		song := <-nextSongCh
+		song, serr := dj.NextSong()
+		if serr != nil {
+			log.Printf("rfk: %v", serr)
+			err_count += 1
+			if err_count > 5 {
+				panic("DJFail FATAL!")
+			}
+			continue
+		}
+		err_count = 0
 
-		err := Play(song)
-		if err != nil {
-			log.Printf("rfk: %v", err)
+		perr := Play(song)
+		if perr != nil {
+			log.Printf("rfk: %v", perr)
 			time.Sleep(1 * time.Second)
 		}
-		//panic("howmanygoroutines?")
 	}
 }
 
