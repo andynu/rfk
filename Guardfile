@@ -33,7 +33,8 @@ require 'rainbow'
 guard :shell do
   watch(/(.*).go/) do |m|
     puts "---"
-    cmd = "go build -o rfk-server ./server "
+    #cmd = "go build -o rfk-server ./server "
+    cmd = "go run ./song_oracle/*.go"
     puts `#{cmd}`
 
     exit_code = $?.to_i
