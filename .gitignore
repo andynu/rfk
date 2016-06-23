@@ -14,3 +14,4 @@ vendor/github.com/dhowden/tag/tag/tag
 /rfk-graph
 lastfm.toml
 /lastfm.json
+*.tsv
