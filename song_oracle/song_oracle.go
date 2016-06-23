@@ -96,7 +96,7 @@ type KarmaMultiWriter struct {
 	writers []KarmaWriter
 }
 
-func (self *KarmaMultiWriter) Register(writer KarmaWriter) {
+func (self *KarmaMultiWriter) RegisterKarmaWriter(writer KarmaWriter) {
 	self.writers = append(self.writers, writer)
 }
 func (self *KarmaMultiWriter) Impress(impression Impression) {
@@ -140,20 +140,10 @@ func (dj *DJ) RegisterKarmaView(k KarmaView) {
 	dj.karmaViews = append(dj.karmaViews, k)
 }
 
-func (dj *DJ) relevantSongs() []string {
-	// var songs Heap
-	//for karmaView := range dj.karmaViews {
-	//	// songs.concat karmaView.RelevantSongs()
-	//}
-	// return songs.List()
-	var songs []string
-	return songs
-}
-
-func mergeRelevant(lists ...impressionList) impressionList {
+func (dj *DJ) relevantSongs() []Impression {
 	var merged impressionList
-	for _, list := range lists {
-		for _, impression := range list {
+	for _, kv := range dj.karmaViews {
+		for _, impression := range kv.RelevantSongs() {
 			merged = merged.AddUpdate(impression)
 		}
 	}
@@ -167,32 +157,6 @@ type ImpressionLog interface {
 	RegisterKarmaWriter(k KarmaWriter)
 }
 
-// Karma Module
-type KarmaModule struct{}
-
-// Initialization
-func (m *KarmaModule) Init() {
-	// launch updater go routine
-	go m.updateTicker()
-}
-
-// Internals
-func (m *KarmaModule) updateTicker() {
-	// run update() every now and then.
-}
-
-func (m *KarmaModule) update() {
-	// update the current state.
-}
-
-// KarmaView
-func (m *KarmaModule) RelevantSongs() {
-}
-
-// KarmaWriter
-func (m *KarmaModule) Impress(i Impression) {
-}
-
 func main() {
 	fmt.Println("Stub")
 
@@ -200,8 +164,12 @@ func main() {
 	weatherKm := &WeatherKm{}
 
 	kwFanout := &KarmaMultiWriter{}
-	kwFanout.Register(weatherKm)
-	kwFanout.Register(timeKm)
+	kwFanout.RegisterKarmaWriter(weatherKm)
+	kwFanout.RegisterKarmaWriter(timeKm)
+
+	dj := DJ{}
+	dj.RegisterKarmaView(weatherKm)
+	dj.RegisterKarmaView(timeKm)
 
 	ks := &KarmaSpreader{destination: kwFanout}
 
@@ -218,14 +186,7 @@ func main() {
 		ks.Impress(impression)
 	}
 
-	relevantLists := []impressionList{
-		timeKm.RelevantSongs(),
-		weatherKm.RelevantSongs(),
-	}
-
-	merged := mergeRelevant(relevantLists...)
-
-	for _, impression := range merged {
+	for _, impression := range dj.relevantSongs() {
 		fmt.Printf("merged: %v\n", impression)
 	}
 
