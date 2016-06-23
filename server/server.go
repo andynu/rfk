@@ -49,13 +49,13 @@ func main() {
 			player.Pause()
 		}
 
-		player.PlaySongs()
-
 		go env.Updater()
 
 		go rpc.Listener()
 		go console.Listener()
 		go rest.Listener()
+
+		player.PlaySongs()
 
 	} // switch
 
