@@ -27,3 +27,20 @@ func (m *KarmaModule) RelevantSongs() []Impression {
 // KarmaWriter
 func (m *KarmaModule) Impress(i Impression) {
 }
+
+// ------------------------------------------------
+
+type ImpressionPipe struct {
+	readers []chan Impression
+}
+
+func (p *ImpressionPipe) ReaderChan() chan Impression {
+	c := make(chan Impression)
+	p.readers = append(p.readers)
+	return c
+}
+func (p *ImpressionPipe) Write(impression Impression) {
+	for _, reader := range p.readers {
+		reader <- impression
+	}
+}

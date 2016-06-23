@@ -10,6 +10,7 @@ import (
 type Impression struct {
 	SongHash   string
 	Impression int
+	State      string
 }
 
 type impressionList []Impression
@@ -152,9 +153,45 @@ func (dj *DJ) relevantSongs() []Impression {
 
 // ------------------------------------------------
 
-type ImpressionLog interface {
-	Impress(Impression)
-	RegisterKarmaWriter(k KarmaWriter)
+type ImpressionLog struct {
+	impressionWriters       []KarmaWriter
+	impressionSpreadWriters []KarmaWriter
+}
+
+func NewImpressionLog() *ImpressionLog {
+	return &ImpressionLog{
+		impressionWriters:       make([]KarmaWriter, 0),
+		impressionSpreadWriters: make([]KarmaWriter, 0),
+	}
+}
+
+func (self *ImpressionLog) Impress(impression Impression) {
+	// direct
+	for _, writer := range self.impressionWriters {
+		writer.Impress(impression)
+	}
+
+	// spread
+	for _, writer := range self.impressionSpreadWriters {
+		fmt.Println(writer)
+		writer.Impress(impression)
+	}
+	for _, spreadImpression := range self.getSpreadImpressions(impression) {
+		for _, writer := range self.impressionSpreadWriters {
+			writer.Impress(spreadImpression)
+		}
+	}
+
+}
+
+func (self *ImpressionLog) getSpreadImpressions(impression Impression) []Impression {
+	var spreadImpressions []Impression
+	return spreadImpressions
+}
+
+func (self *ImpressionLog) RegisterSpreadKarmaWriter(k KarmaWriter) {
+	fmt.Println(k)
+	self.impressionSpreadWriters = append(self.impressionSpreadWriters, k)
 }
 
 func main() {
@@ -163,15 +200,16 @@ func main() {
 	timeKm := &TimeKm{}
 	weatherKm := &WeatherKm{}
 
-	kwFanout := &KarmaMultiWriter{}
-	kwFanout.RegisterKarmaWriter(weatherKm)
-	kwFanout.RegisterKarmaWriter(timeKm)
+	impLog := NewImpressionLog()
+	//impLog.RegisterKarmaWriter(fileWriter)
+	impLog.RegisterSpreadKarmaWriter(weatherKm)
+	impLog.RegisterSpreadKarmaWriter(timeKm)
+
+	fmt.Println(impLog)
 
 	dj := DJ{}
 	dj.RegisterKarmaView(weatherKm)
 	dj.RegisterKarmaView(timeKm)
-
-	ks := &KarmaSpreader{destination: kwFanout}
 
 	impressions := []Impression{
 		Impression{SongHash: "a", Impression: 1},
@@ -183,7 +221,7 @@ func main() {
 	}
 	for _, impression := range impressions {
 		fmt.Printf("outer Impress: %v\n", impression)
-		ks.Impress(impression)
+		impLog.Impress(impression)
 	}
 
 	for _, impression := range dj.relevantSongs() {
